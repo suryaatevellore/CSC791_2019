@@ -1,0 +1,3 @@
+#!/bin/bash
+ip=$(sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $1)
+sshpass -p "root" ssh -o StrictHostKeyChecking=no -l root $ip
