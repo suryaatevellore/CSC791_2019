@@ -1,0 +1,25 @@
+#!/bin/bash
+
+CONFPATH="/home/RND-TOOL/rnd_lab/scripts/frrconf"
+
+# For getting the IPs of all devices to Container_ip.txt
+for i in $(sudo docker container ls | awk 'NR>1 {print $NF}'); 
+do  
+        sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $i; 
+done > Container_ip.txt
+
+# Create a directory for saving configurations
+mkdir frrconf
+
+# Adding the host to authorised hosts
+for ip in `cat Container_ip.txt`
+do
+        sshpass -p "root" ssh-copy-id -i ~/.ssh/id_rsa.pub root@$ip
+done
+
+# Now copy
+for ip in `cat Container_ip.txt`
+do
+        echo "Copying to $ip"
+        sshpass -p "root" scp -r $CONFPATH/$ip.conf root@$ip:/etc/frr/frr.conf
+done
