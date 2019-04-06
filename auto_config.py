@@ -36,6 +36,7 @@ def get_docker_ips(device_list):
 
 
 def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
+    global bridge_config
     bridge_config = bridge_config.split(',')
     for device in device_list:
         os.system("apt-get install bridge-utils -y")
