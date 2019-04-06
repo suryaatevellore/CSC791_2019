@@ -59,7 +59,7 @@ def main():
     device_loopbacks = create_loopbacks(devices_list)
     device_ip = get_docker_ips(devices_list)
     #common_terminal_config(devices_list, device_loopbacks)
-    config_via_ssh(device_ip)
+    config_via_ssh(device_ip, device_loopbacks)
 
 
 if __name__=="__main__":
