@@ -42,8 +42,8 @@ def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
         print(f"Configuring bridges and tunnels on {device}")
         os.system(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'")
         os.system(f"sudo docker exec -d {device} bash -c 'ip addr add {Loopbacks[device]}/32 dev lo'")
-        os.system(f"ip link add tun1 type vxlan id 100 dstport 4789 local {Loopbacks[device]} nolearning")
-        os.system(f"ip link add tun1 type vxlan id 200 dstport 4789 local {Loopbacks[device]} nolearning")
+        os.system(f"sudo docker exec -d {device} bash -c 'ip link add tun1 type vxlan id 100 dstport 4789 local {Loopbacks[device]} nolearning'")
+        os.system(f"sudo docker exec -d {device} bash -c 'ip link add tun1 type vxlan id 200 dstport 4789 local {Loopbacks[device]} nolearning'")
         for line in bridge_config:
             print(f"sudo docker exec -d {device} /bin/bash -c {line.strip()}")
             os.system(f"sudo docker exec -d {device} /bin/bash -c {line.strip()}")
@@ -60,7 +60,7 @@ def main():
     device_loopbacks = create_loopbacks(devices_list)
     device_ip = get_docker_ips(devices_list)
     common_terminal_config(devices_list, device_loopbacks)
-    config_via_ssh(devices_list)
+    config_via_ssh(device_ip)
 
 
 if __name__=="__main__":
