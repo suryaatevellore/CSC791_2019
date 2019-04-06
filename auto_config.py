@@ -58,7 +58,7 @@ def main():
     devices_list = spines + leaves
     device_loopbacks = create_loopbacks(devices_list)
     device_ip = get_docker_ips(devices_list)
-    common_terminal_config(devices_list, device_loopbacks)
+    #common_terminal_config(devices_list, device_loopbacks)
     config_via_ssh(device_ip)
 
 
