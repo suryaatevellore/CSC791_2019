@@ -30,7 +30,7 @@ def get_docker_ips(device_list):
     device_ip = {}
     for device in device_list:
         completed = subprocess.run("sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' " + device, shell=True, stdout=subprocess.PIPE)
-        leaves_ip[device] = completed.stdout.decode('utf-8').strip()
+        device_ip[device] = completed.stdout.decode('utf-8').strip()
 
     return device_ip
 
@@ -41,7 +41,7 @@ def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
         os.system("apt-get install bridge-utils -y")
         os.system(f"sudo docker exec -d {device} bash -c 'ip addr add {Loopbacks[device]}/32 dev lo'")
         os.system(f"ip link add tun1 type vxlan id 100 dstport 4789 local {Loopbacks[device]} nolearning")
-        os.system(f"ip link add tun1 type vxlan id 200 dstport 4789 local {Loopbackleaf]} nolearning")
+        os.system(f"ip link add tun1 type vxlan id 200 dstport 4789 local {Loopback[device]} nolearning")
         for line in bridge_config:
             os.system(f"sudo docker exec -d {device} bash -c {line}")
 
@@ -57,6 +57,7 @@ def main():
     device_loopbacks = create_loopbacks(devices_list)
     device_ip = get_docker_ips(devices_list)
     common_terminal_config(devices_list, device_loopbacks)
+    config_via_ssh(devices_list)
 
 
 if __name__=="__main__":
