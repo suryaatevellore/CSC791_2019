@@ -9,7 +9,7 @@ def config_via_ssh(device_list, username='root', password='root'):
         ssh = paramiko.SSHClient()
         ssh.connect(device, username=username, password=password)
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        print(f"Interactive SSH session established to {device}"}
+        print(f"Interactive SSH session established to {device}")
         client = ssh.invoke_shell()
         # check if we are on the root of the correct system
         output = client.recv(1000)
