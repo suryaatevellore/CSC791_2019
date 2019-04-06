@@ -1,7 +1,7 @@
 import paramiko
 import subprocess
 import os
-
+from ssh_config import config_via_ssh
 
 bridge_config = """
 'brctl addbr t1',
@@ -38,21 +38,12 @@ def get_docker_ips(device_list):
 def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
     bridge_config = bridge_config.split(',')
     for device in device_list:
-        os.system(f"sudo docker exec -d {device} bash -c 'ip addr add {Loopbacks[device]} dev lo'")
+        os.system("apt-get install bridge-utils -y")
+        os.system(f"sudo docker exec -d {device} bash -c 'ip addr add {Loopbacks[device]}/32 dev lo'")
         os.system(f"ip link add tun1 type vxlan id 100 dstport 4789 local {Loopbacks[device]} nolearning")
         os.system(f"ip link add tun1 type vxlan id 200 dstport 4789 local {Loopbackleaf]} nolearning")
         for line in bridge_config:
             os.system(f"sudo docker exec -d {device} bash -c {line}")
-
-
-def config_via_ssh():
-    pass
-    # for leaf, ip in leaves_ip.items():
-    #     ssh = paramiko.SSHClient()
-    #     ssh.connect(ip, username=root, password=root)
-    #     for cmd_to_execute in loopback_config:
-    #         ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd_to_execute)
-    #         print(ssh_stdout)
 
 
 def main():
@@ -66,6 +57,7 @@ def main():
     device_loopbacks = create_loopbacks(devices_list)
     device_ip = get_docker_ips(devices_list)
     common_terminal_config(devices_list, device_loopbacks)
+
 
 if __name__=="__main__":
     main()
