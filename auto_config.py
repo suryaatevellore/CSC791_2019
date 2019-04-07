@@ -17,7 +17,7 @@ def main():
     all_devices = spines + leaves + hosts
     all_devices_index = {element:index for element, index in enumerate(all_devices)}
     devices_list = spines + leaves
-    device_loopbacks = create_loopbacks(devices_list, index)
+    device_loopbacks, index = create_loopbacks(devices_list, index)
     RR = handle_RR(devices_list, index)
     device_ip = get_docker_ips(devices_list)
     #common_terminal_config(devices_list, device_loopbacks)

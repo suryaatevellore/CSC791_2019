@@ -1,10 +1,11 @@
 
-def create_loopbacks(device_list):
+def create_loopbacks(device_list, index):
     Loopbacks = {}
-    for index, element in enumerate(device_list):
-        Loopbacks[element] = (str(index+1)+'.')*3 + str(index+1)
+    for element in device_list:
+        Loopbacks[element] = (str(index)+'.')*3 + str(index)
+        index+=1
 
-    return Loopbacks
+    return Loopbacks, index
 
 
 def get_docker_ips(device_list):
