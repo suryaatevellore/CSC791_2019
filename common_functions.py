@@ -1,3 +1,4 @@
+import subprocess
 
 def create_loopbacks(device_list, index):
     Loopbacks = {}
