@@ -30,11 +30,13 @@ def config_via_ssh(device_list, loopbacks=None, username='root', password='root'
         ssh.connect(ip, username=username, password=password)
         print(f"Interactive SSH session established to {device}")
         client = ssh.invoke_shell()
+        connections = create_neighbors()
+
         if device[0] == 'L':
-            configure_bridges(client, bridge_config, loopbacks, device)
+            configure_bridges(client, bridge_config, connections[device], loopbacks, device)
 
         #configure ospf
-        connections = create_neighbors()
+
         print(f"started ospf configuration for {device}")
         ospf_ips = filter_by(connections[device], 'IP', device)
         configure_ospf(client, ospf_ips, loopbacks[device])
