@@ -1,6 +1,6 @@
 import os
 import subprocess
-from adjacency_matrix import create_neighbors
+from adjacency_matrix import create_neighbors, host_mapping
 
 
 bridge_config = """
