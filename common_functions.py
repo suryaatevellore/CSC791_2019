@@ -18,3 +18,7 @@ def get_docker_ips(device_list):
         device_ip[device] = completed.stdout.decode('utf-8').strip()
 
     return device_ip
+
+
+def displayLine():
+    print("="*30)

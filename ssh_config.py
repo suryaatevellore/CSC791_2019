@@ -4,7 +4,7 @@ from routing_functions import configure_bgp, configure_ospf, configure_bridges
 from adjacency_matrix import filter_by
 from adjacency_matrix import create_neighbors
 
-bridge_config = """
+bridge_config = [
 'brctl addbr t1',
 'brctl addbr t2',
 'ip link set up dev t1',
@@ -15,13 +15,11 @@ bridge_config = """
 'brctl addif t2 tun2',
 'ip link set up dev tun1',
 'ip link set up dev tun2'
-"""
+]
 
 
 def config_via_ssh(device_list, loopbacks=None, username='root', password='root'):
     global bridge_config
-    bridge_config = bridge_config.split(',')
-    print("Configuring bridges")
 
     for device, ip in device_list.items():
         print("Creating ssh connection")
@@ -32,8 +30,13 @@ def config_via_ssh(device_list, loopbacks=None, username='root', password='root'
         client = ssh.invoke_shell()
         connections = create_neighbors()
 
+        # configure_bridges
         if device[0] == 'L':
-            configure_bridges(client, bridge_config, connections[device], loopbacks, device)
+            print(f"Configure bridge on {device}")
+            configure_bridges(client, bridge_config, connections[device], loopbacks[device], device)
+        elif device[0] == 'S':
+            print("No need for bridges or tunnels on spines")
+
 
         #configure ospf
 

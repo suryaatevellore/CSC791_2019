@@ -1,4 +1,6 @@
 import time
+from adjacency_matrix import host_mapping
+from common_functions import displayLine
 
 def configure_bgp(client, loopbacks, device):
     print(f"started bgp configuration for {device}")
@@ -48,15 +50,32 @@ def configure_ospf(client, neighbor_IP, loopback):
     # print(output)
 
 
-def configure_bridges(client, bridge_config, loopbacks, connections, device):
-    client.send('ip link add tun1 type vxlan id 100 dstport 4789 local {Loopbacks[device]} nolearning')
+def configure_bridges(client, bridge_config, connections, loopback, device):
+    print("Configuring tunnels first")
+    client.send("\r")
     time.sleep(0.5)
-    client.send('ip link add tun2 type vxlan id 200 dstport 4789 local {Loopbacks[device]} nolearning')
+    client.send(f"ip link add tun1 type vxlan id 100 dstport 4789 local {loopback} nolearning\r")
+    time.sleep(0.5)
+    output = client.recv(1000)
+    print(f"First tunnel config {output}")
+    client.send(f"ip link add tun2 type vxlan id 200 dstport 4789 local {loopback} nolearning\r")
     time.sleep(0.5)
     for line in bridge_config:
-        bridges_list = ['t1', 't2']
-        hosts = host_mapping(connections, bridges_list)
-        for entry in hosts:
-            print(f"Configuring {entry} on {device}")
-            client.send('brctl addif {entry[2]} {entry[1]}')
-            time.sleep(0.5)
+        print(f"Command being sent {line}")
+        client.send(f"{line}\r")
+        time.sleep(0.5)
+        output = client.recv(1000);
+        print(f"Bridge config: {output}")
+
+    bridges_list = ['t1', 't2']
+    hosts = host_mapping(connections, bridges_list)
+    print(f"Host directory {hosts}")
+    for entry in hosts:
+        displayLine()
+        print(f"Configuring {entry}, bridge {entry[2]}, interface {entry[1]} on {device}\r")
+        displayLine()
+        client.send(f"brctl addif {entry[2]} {entry[1]}\r")
+        time.sleep(0.5)
+        output = client.recv(1000)
+        print(output)
+        print("Configuring client interfaces on bridges")
