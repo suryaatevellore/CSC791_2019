@@ -17,8 +17,20 @@ def config_via_ssh(device_list, loopbacks=None, username='root', password='root'
 
         #configure ospf
         connections = create_neighbors()
-        ospf_ips = filter_by(connections, 'IP', device)
+        print(f"started ospf configuration for {device}")
+        ospf_ips = filter_by(connections[device], 'IP', device)
         configure_ospf(client, ospf_ips, loopbacks[device])
+        print(f"Finished ospf configuration for {device}")
 
         # configure BGP
-        configure_bgp(client, loopbacks, device)
+        loopback_bgp = {}
+        if device[0] == 'S':
+            for router, loopback in loopbacks.items():
+                if(router[0]=='L'):
+                    loopback_bgp[router] = loopback
+            
+        elif device[0] == 'L':
+            for router, loopback in loopbacks.items():
+                if(router[0]=='S'):
+                    loopback_bgp[router] = loopback
+        configure_bgp(client, loopback_bgp, device)

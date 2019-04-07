@@ -18,7 +18,7 @@ def main():
     device_loopbacks, index = create_loopbacks(devices_list, index)
     RR = handle_RR(devices_list, index)
     device_ip = get_docker_ips(devices_list)
-    #common_terminal_config(leaves, device_loopbacks)
+    common_terminal_config(devices_list, device_loopbacks)
     if RR:
         RR_loopbacks = create_loopbacks(RRs, index)
         common_terminal_config(RR, RR_loopbacks)

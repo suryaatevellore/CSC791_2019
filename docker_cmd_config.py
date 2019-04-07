@@ -1,3 +1,5 @@
+import os
+
 bridge_config = """
 'brctl addbr t1',
 'brctl addbr t2',
@@ -18,7 +20,9 @@ def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
         print(f"Configuring bridges and tunnels on {device}")
         os.system(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'")
         os.system(f"sudo docker exec -d {device} bash -c 'ip addr add {Loopbacks[device]}/32 dev lo'")
-        os.system(f"sudo docker exec -d {device} bash -c 'ip link add tun1 type vxlan id 100 dstport 4789 local {Loopbacks[device]} nolearning'")
-        os.system(f"sudo docker exec -d {device} bash -c 'ip link add tun2 type vxlan id 200 dstport 4789 local {Loopbacks[device]} nolearning'")
         for line in bridge_config:
-            os.system(f"sudo docker exec -d {device} /bin/bash -c {line.strip()}")
+            if device[0]=='L':
+                print(f"sudo docker exec -d {device} /bin/bash -c {line.strip()}")
+                os.system(f"sudo docker exec -d {device} bash -c 'ip link add tun1 type vxlan id 100 dstport 4789 local {Loopbacks[device]} nolearning'")
+                os.system(f"sudo docker exec -d {device} bash -c 'ip link add tun2 type vxlan id 200 dstport 4789 local {Loopbacks[device]} nolearning'")
+                os.system(f"sudo docker exec -d {device} /bin/bash -c {line.strip()}")

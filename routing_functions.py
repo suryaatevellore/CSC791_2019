@@ -1,6 +1,7 @@
 import time
 
 def configure_bgp(client, loopbacks, device):
+    print(f"started bgp configuration for {device}")
     client.send("vtysh\r")
     time.sleep(.5)
     client.send("configure t\r")
@@ -23,8 +24,9 @@ def configure_bgp(client, loopbacks, device):
     time.sleep(0.5)
     client.send('end\r')
     time.sleep(0.5)
-    output = client.recv(1000)
-    print(output)
+    #output = client.recv(1000)
+    #print(output)
+    print(f"Finished bgp configuration for {device}")
 
 
 def configure_ospf(client, neighbor_IP, loopback):
@@ -42,8 +44,8 @@ def configure_ospf(client, neighbor_IP, loopback):
         time.sleep(0.5)
     client.send("end")
     time.sleep(0.5)
-    output = client.recv(1000)
-    print(output)
+    #output = client.recv(1000)
+    #print(output)
 
 
 
