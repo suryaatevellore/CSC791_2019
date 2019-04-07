@@ -1,5 +1,3 @@
-import paramiko
-import subprocess
 import os
 from ssh_config import config_via_ssh
 from docker_cmd_config import common_terminal_config
