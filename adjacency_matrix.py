@@ -53,7 +53,6 @@ def filter_by(connections, key, device):
                         result.append(_temp[1:(len(_temp)-1)])
         elif device[0]=='L':
              for attrs in connections:
-                print(f"{attrs[0][0]}, {attrs[1]}")
                 if attrs[0][0]=='S':
                      _temp = attrs[1]
                      result.append(_temp[1:(len(_temp)-1)])
