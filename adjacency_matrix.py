@@ -12,21 +12,22 @@ def create_connections(FILEPATH):
             args = line.strip().split()
             if len(args) > 5:
                 # initialise for spines
-                for args[0] in line:
-                    if args[0] in connections.keys():
-                        connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
-                    else:
-                        connections[args[0]] = []
-                        connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
+                if args[0] in connections.keys():
+                    connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
+                else:
+                    connections[args[0]] = []
+                    connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
 
-                    if args[4] in connections.keys():
-                        connections[args[4]].append((args[0], args[6], args[5], args[2], args[1]))
-                    else:
-                        connections[args[0]] = []
-                        connections[args[4]].append((args[0], args[6], args[5], args[2], args[1]))
+                if args[4] in connections.keys():
+                    connections[args[4]].append((args[0], args[6], args[5], args[2], args[1]))
+                else:
+                    connections[args[4]] = []
+                    connections[args[4]].append((args[0], args[6], args[5], args[2], args[1]))
 
-    print(filter_by(connections, 'IP', 'L1'))
-    print(connections['S1'])
+    #print("=======================connections with ip =================")
+    #print(filter_by(connections['L1'], 'IP', 'L1'))
+    #print("====================connections===================")
+    #print(connections['L1'])
     return connections
 
 
@@ -46,16 +47,15 @@ def filter_by(connections, key, device):
     result = []
     if key=='IP':
         if device[0]=='S':
-            for source, attrs in connections.items():
-                print(attrs[0])
-                if source[0]=='S' and attrs[0][0][0]=='L':
-                        _temp = attrs[0][1]
+            for attrs in connections:
+                if attrs[0][0]=='L':
+                        _temp = attrs[1]
                         result.append(_temp[1:(len(_temp)-1)])
         elif device[0]=='L':
-             for source, attrs in connections.items():
-                print(f"{attrs}")
-                if source[0]=='L' and attrs[0][0][0]=='S':
-                     _temp = attrs[0][1]
+             for attrs in connections:
+                print(f"{attrs[0][0]}, {attrs[1]}")
+                if attrs[0][0]=='S':
+                     _temp = attrs[1]
                      result.append(_temp[1:(len(_temp)-1)])
 
     return result
