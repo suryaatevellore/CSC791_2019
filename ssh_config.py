@@ -1,7 +1,8 @@
 import time
 import paramiko
-from routing_functions import configure_bgp, configure_ospf, configure_brigdes
-from adjacency_matrix import filter_by, create_neighbors
+from routing_functions import configure_bgp, configure_ospf, configure_bridges
+from adjacency_matrix import filter_by
+from adjacency_matrix import create_neighbors
 
 bridge_config = """
 'brctl addbr t1',
@@ -30,7 +31,7 @@ def config_via_ssh(device_list, loopbacks=None, username='root', password='root'
         print(f"Interactive SSH session established to {device}")
         client = ssh.invoke_shell()
         if device[0] == 'L':
-            configure_bridges(client, bridge_config, loopbacks)
+            configure_bridges(client, bridge_config, loopbacks, device)
 
         #configure ospf
         connections = create_neighbors()

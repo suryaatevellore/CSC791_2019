@@ -12,6 +12,3 @@ def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
         print(f"Configuring loopbacks on {device}")
         os.system(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'")
         os.system(f"sudo docker exec -d {device} bash -c 'ip addr add {Loopbacks[device]}/32 dev lo'")
-
-            if device[0] == 'L':
-                configure_bridges()

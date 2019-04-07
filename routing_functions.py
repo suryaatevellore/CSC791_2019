@@ -48,7 +48,7 @@ def configure_ospf(client, neighbor_IP, loopback):
     # print(output)
 
 
-def configure_bridges(client, bridge_config, loopbacks):
+def configure_bridges(client, bridge_config, loopbacks, device):
     client.send('ip link add tun1 type vxlan id 100 dstport 4789 local {Loopbacks[device]} nolearning')
     time.sleep(0.5)
     client.send('ip link add tun2 type vxlan id 200 dstport 4789 local {Loopbacks[device]} nolearning')
@@ -58,5 +58,6 @@ def configure_bridges(client, bridge_config, loopbacks):
         bridges_list = ['t1', 't2']
         hosts = host_mapping(connections[device], bridges_list)
         for entry in hosts:
+            print(f"Configuring {entry} on {device}")
             client.send('brctl addif {entry[2]} {entry[1]}')
             time.sleep(0.5)
