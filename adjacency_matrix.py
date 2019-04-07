@@ -13,12 +13,15 @@ def create_connections(FILEPATH):
             if len(args) > 5:
                 # initialise for spines
                 for args[0] in line:
-                    if args[0] in connections.keys() and args[4] in connections.keys():
+                    if args[0] in connections.keys():
                         connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
-                        connections[args[4]].append((args[0], args[6], args[5], args[2], args[1]))
                     else:
                         connections[args[0]] = []
                         connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
+
+                    if args[4] in connections.keys():
+                        connections[args[4]].append((args[0], args[6], args[5], args[2], args[1]))
+                    else:
                         connections[args[0]] = []
                         connections[args[4]].append((args[0], args[6], args[5], args[2], args[1]))
 
