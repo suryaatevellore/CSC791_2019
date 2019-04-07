@@ -12,6 +12,7 @@ def main():
     spines = ['S' + str(i) for i in range(1, 5)]
     leaves = ['L' + str(i) for i in range(1, 7)]
     hosts = ['H' + str(i) for i in range(1, 12)]
+    index = 1
 
     all_devices = spines + leaves + hosts
     all_devices_index = {element:index for element, index in enumerate(all_devices)}
