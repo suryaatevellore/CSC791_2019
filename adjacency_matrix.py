@@ -72,7 +72,7 @@ def host_mapping(connections, bridges_list=None, number_of_tenants=1):
         if entry[0][0] == 'H':
             hosts_ports.append((entry[0], entry[2], bridges_list[index]))
             index += 1
-            if index == (number_of_bridges - 1):
+            if index == (number_of_bridges):
                 index = 0
 
     return hosts_ports

@@ -26,10 +26,11 @@ def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
         os.system(f"sudo docker exec -d {device} bash -c 'ip addr add {Loopbacks[device]}/32 dev lo'")
         for line in bridge_config:
             if device[0]=='L':
-                print("Configuring bridges and tunnels on {device}")
+                print(f"Configuring bridges and tunnels on {device}")
                 os.system(f"sudo docker exec -d {device} bash -c 'ip link add tun1 type vxlan id 100 dstport 4789 local {Loopbacks[device]} nolearning'")
                 os.system(f"sudo docker exec -d {device} bash -c 'ip link add tun2 type vxlan id 200 dstport 4789 local {Loopbacks[device]} nolearning'")
                 completed = subprocess.run(f"sudo docker exec -d {device} /bin/bash -c {line.strip()}", shell=True, stdout=subprocess.PIPE)
+                print(completed.stdout.decode('utf-8').strip())
                 # add host interfaces to bridges
                 # if host number is odd, add to bridge1
                 # if host number is even, add to bridge2
@@ -37,6 +38,5 @@ def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
                 bridges_list = ['t1', 't2']
                 hosts = host_mapping(connections[device], bridges_list)
                 for entry in hosts:
-                    completed = subprocess.run(f"sudo docker exec -d {device} 'brctl addif {entry[2]} {entry[1]}", shell=True, stdout=subprocess.PIPE)
+                    completed = subprocess.run(f"sudo docker exec -d {device} bash -c 'brctl addif {entry[2]} {entry[1]}'", shell=True, stdout=subprocess.PIPE)
                     print(completed.stdout.decode('utf-8').strip())
-
