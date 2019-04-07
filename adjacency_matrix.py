@@ -9,14 +9,15 @@ def create_connections(FILEPATH):
         for line in file:
             args = line.strip().split()
             if len(args) > 5:
-                # arguments in the form of (destination, localip, local port, destip, dest port)
+                # arguments in the form of (destname, localip, local port, destip, dest port)
                 if args[0] in connections.keys():
                     connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
                 else:
                     connections[args[0]] = []
+                    connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
 
-    print(filter_by(connections, 'IP', 'S1'))
-
+    # print(filter_by(connections, 'IP', 'S1'))
+    # print(connections['S1'])
     return connections
 
 
@@ -37,12 +38,13 @@ def filter_by(connections, key, device):
     if key=='IP':
         if device[0]=='S':
             for source, attrs in connections.items():
-                if source[0]=='S' and attrs[0][5][0]=='L':
+                print(attrs[0])
+                if source[0]=='S' and attrs[0][0][0]=='L':
                         _temp = attrs[0][1]
                         result.append(_temp[1:(len(_temp)-1)])
         elif device[0]=='L':
              for source, attrs in connections.items():
-                if source[0]=='L' and attrs[0][5][0]=='S':
+                if source[0]=='L' and attrs[0][0][0]=='S':
                      _temp = attrs[0][1]
                      result.append(_temp[1:(len(_temp)-1)])
 
