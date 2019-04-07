@@ -2,8 +2,8 @@ import time
 
 def configure_bgp(client, loopbacks, device):
     print(f"started bgp configuration for {device}")
-    client.send("vtysh\r")
-    time.sleep(.5)
+    # client.send("vtysh\r")
+    # time.sleep(.5)
     client.send("configure t\r")
     time.sleep(0.5)
     client.send("router bgp 100\r")
@@ -24,8 +24,8 @@ def configure_bgp(client, loopbacks, device):
     time.sleep(0.5)
     client.send('end\r')
     time.sleep(0.5)
-    #output = client.recv(1000)
-    #print(output)
+    # output = client.recv(1000)
+    # print(output)
     print(f"Finished bgp configuration for {device}")
 
 
@@ -44,9 +44,19 @@ def configure_ospf(client, neighbor_IP, loopback):
         time.sleep(0.5)
     client.send("end")
     time.sleep(0.5)
-    #output = client.recv(1000)
-    #print(output)
+    # output = client.recv(1000)
+    # print(output)
 
 
-
-
+def configure_bridges(client, bridge_config, loopbacks):
+    client.send('ip link add tun1 type vxlan id 100 dstport 4789 local {Loopbacks[device]} nolearning')
+    time.sleep(0.5)
+    client.send('ip link add tun2 type vxlan id 200 dstport 4789 local {Loopbacks[device]} nolearning')
+    time.sleep(0.5)
+    for line in bridge_config:
+        connections = create_neighbors()
+        bridges_list = ['t1', 't2']
+        hosts = host_mapping(connections[device], bridges_list)
+        for entry in hosts:
+            client.send('brctl addif {entry[2]} {entry[1]}')
+            time.sleep(0.5)
