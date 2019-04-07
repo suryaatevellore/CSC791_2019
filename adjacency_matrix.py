@@ -5,6 +5,9 @@ from pathlib import Path
 # source, localport, localip, --, dst, dstport, dstip
 # 0         1           2       3  4     5       6
 
+
+# dst, localip, localport, dstip, dstport
+
 def create_connections(FILEPATH):
     connections = {}
     with open(FILEPATH, "r+") as file:
@@ -45,22 +48,35 @@ def filter_by(connections, key, device):
         returns the attributes as per specified key
     """
     result = []
-    if key=='IP':
-        if device[0]=='S':
+    if key == 'IP':
+        if device[0] == 'S':
             for attrs in connections:
-                if attrs[0][0]=='L':
+                if attrs[0][0] == 'L':
                         _temp = attrs[1]
-                        result.append(_temp[1:(len(_temp)-1)])
-        elif device[0]=='L':
-             for attrs in connections:
-                if attrs[0][0]=='S':
-                     _temp = attrs[1]
-                     result.append(_temp[1:(len(_temp)-1)])
+                        result.append(_temp[1:(len(_temp) - 1)])
+        elif device[0] == 'L':
+            for attrs in connections:
+                if attrs[0][0] == 'S':
+                    _temp = attrs[1]
+                    result.append(_temp[1:(len(_temp) - 1)])
 
     return result
 
 
-if __name__=='__main__':
+def host_mapping(connections, bridges_list=None, number_of_tenants=1):
+    # hostname, localport, bridge_id
+    hosts_ports = []
+    index = 0
+    number_of_bridges = len(bridges_list)
+    for entry in connections:
+        if entry[0][0] == 'H':
+            hosts_ports.append((entry[0], entry[2], bridges_list[index]))
+            index += 1
+            if index == (number_of_bridges - 1):
+                index = 0
+
+    return hosts_ports
+
+
+if __name__ == '__main__':
     create_neighbors()
-
-

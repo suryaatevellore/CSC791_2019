@@ -1,5 +1,7 @@
 import os
 import subprocess
+from adjacency_matrix import create_neighbors
+
 
 bridge_config = """
 'brctl addbr t1',
@@ -14,6 +16,7 @@ bridge_config = """
 'ip link set up dev tun2'
 """
 
+
 def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
     global bridge_config
     bridge_config = bridge_config.split(',')
@@ -27,3 +30,12 @@ def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
                 os.system(f"sudo docker exec -d {device} bash -c 'ip link add tun1 type vxlan id 100 dstport 4789 local {Loopbacks[device]} nolearning'")
                 os.system(f"sudo docker exec -d {device} bash -c 'ip link add tun2 type vxlan id 200 dstport 4789 local {Loopbacks[device]} nolearning'")
                 completed = subprocess.run(f"sudo docker exec -d {device} /bin/bash -c {line.strip()}", shell=True, stdout=subprocess.PIPE)
+                # add host interfaces to bridges
+                # if host number is odd, add to bridge1
+                # if host number is even, add to bridge2
+                connections = create_neighbors()
+                hosts = host_mapping(connections[device])
+                for entry in hosts:
+                    completed = subprocess.run(f"sudo docker exec -d {device} 'brctl addif {entry[2]} {entry[1]}", shell=True, stdout=subprocess.PIPE)
+                    print(completed.stdout.decode('utf-8').strip())
+
