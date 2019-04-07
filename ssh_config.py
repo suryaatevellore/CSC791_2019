@@ -11,13 +11,12 @@ def config_via_ssh(device_list, loopbacks=None, username='root', password='root'
         ssh.connect(ip, username=username, password=password)
         print(f"Interactive SSH session established to {device}")
         client = ssh.invoke_shell()
-        # configure BGP
-        configure_bgp(client, loopbacks)
 
         #configure ospf
-
         ospf_ips = filter_by(connections, 'IP', device)
         configure_ospf(client, ospf_ips, loopbacks[device])
 
+        # configure BGP
+        configure_bgp(client, loopbacks)
 
 
