@@ -1,6 +1,6 @@
 import time
 
-def configure_bgp(client, loopbacks):
+def configure_bgp(client, loopbacks, device):
     client.send("vtysh\r")
     time.sleep(.5)
     client.send("configure t\r")
@@ -34,11 +34,11 @@ def configure_ospf(client, neighbor_IP, loopback):
     time.sleep(0.5)
     client.send("router ospf\r")
     for ip_mask in neighbor_IP:
-        client.send(f"network {ip_mask} area 0")
+        client.send(f"network {ip_mask} area 0\r")
         time.sleep(0.5)
-        client.send(f"network {loopback} area 0")
+        client.send(f"network {loopback} area 0\r")
         time.sleep(0.5)
-        client.send("passive-interface lo")
+        client.send("passive-interface lo\r")
         time.sleep(0.5)
     client.send("end")
     time.sleep(0.5)
