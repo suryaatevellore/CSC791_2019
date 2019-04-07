@@ -1,5 +1,5 @@
 import subprocess
-
+import time
 
 def create_loopbacks(device_list, index):
     Loopbacks = {}
@@ -22,3 +22,13 @@ def get_docker_ips(device_list):
 
 def displayLine():
     print("="*30)
+
+
+def prompt_check(client):
+    client.send("\r")
+    time.sleep(0.5)
+    output = client.recv(100)
+    if 'root@' in output:
+        return 'server'
+    
+    return 'router'

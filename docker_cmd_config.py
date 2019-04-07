@@ -5,7 +5,7 @@ import time
 
 
 def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
-
+    print("Received list and loopbacks {device_list} {Loopbacks}")
     for device in device_list:
         print(f"Configuring loopbacks on {device}")
         os.system(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'")

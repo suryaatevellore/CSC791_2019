@@ -27,10 +27,10 @@ def create_connections(FILEPATH):
                     connections[args[4]] = []
                     connections[args[4]].append((args[0], args[6], args[5], args[2], args[1]))
 
-    #print("=======================connections with ip =================")
-    #print(filter_by(connections['L1'], 'IP', 'L1'))
-    #print("====================connections===================")
-    #print(connections['L1'])
+    # print("=======================connections with ip =================")
+    # print(filter_by(connections['L1'], 'IP', 'L1'))
+    # print("====================connections===================")
+    # print(connections['RR1'])
     return connections
 
 
@@ -45,18 +45,26 @@ def create_neighbors():
 
 def filter_by(connections, key, device):
     """
-        returns the attributes as per specified key
+        returns list, the attributes as per specified key
     """
+    print(f"{connections} recieved for {device}")
     result = []
     if key == 'IP':
-        if device[0] == 'S':
+        if 'RR' in device:
             for attrs in connections:
-                if attrs[0][0] == 'L':
+                if attrs[0][0] in ['L', 'S']:
+                    _temp = attrs[1]
+                    result.append(_temp[1:(len(_temp) - 1)])
+        elif device[0] == 'S':
+            for attrs in connections:
+                # spines can connect to only RR and leaves
+                if attrs[0][0] == 'L' or 'RR' in attrs[0]:
                         _temp = attrs[1]
                         result.append(_temp[1:(len(_temp) - 1)])
         elif device[0] == 'L':
             for attrs in connections:
-                if attrs[0][0] == 'S':
+                # leaves connect to only spine and RR
+                if attrs[0][0] == 'S' or 'RR' in attrs[0]:
                     _temp = attrs[1]
                     result.append(_temp[1:(len(_temp) - 1)])
 
@@ -82,15 +90,18 @@ def match_pattern_matrix(pattern):
     data_folder = Path("/home/RND-TOOL/rnd_lab/scripts/")
     FILENAME = 'connectivitymat.txt'
     FILEPATH = data_folder / FILENAME
-    result = []
+    _temp = set()
     with open(FILEPATH) as file:
         data = file.readlines()
         for item in data:
-            if pattern in item:
-                result.append(item)
+            # handles that readlines would give back full lines
+            item = item.split()
+            for entry in item:
+                if pattern in entry:
+                    _temp.add(entry)
 
-    if result:
-        return result
+    if _temp:
+        return list(_temp)
     else:
         return None
 

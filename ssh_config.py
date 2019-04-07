@@ -18,7 +18,7 @@ bridge_config = [
 ]
 
 
-def config_via_ssh(device_list, loopbacks=None, RR_flag=False, username='root', password='root'):
+def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_flag=False, username='root', password='root'):
     """
         device_list: dictionary as device:IP
         loopbacks  : dictionary as device:LoopbackIP
@@ -47,28 +47,39 @@ def config_via_ssh(device_list, loopbacks=None, RR_flag=False, username='root', 
         # ==========================================================
         # configure ospf for all devices
         # ==========================================================
-        print(f"started ospf configuration for {device}")
-        ospf_ips = filter_by(connections[device], 'IP', device)
-        configure_ospf(client, ospf_ips, loopbacks[device])
-        print(f"Finished ospf configuration for {device}")
+        if ospf_flag:
+            print(f"started ospf configuration for {device}")
+            ospf_ips = filter_by(connections[device], 'IP', device)
+            print(f"Connected IPs for {device} are {ospf_ips}")
+            configure_ospf(client, ospf_ips, loopbacks[device])
+            print(f"Finished ospf configuration for {device}")
 
         # ==========================================================
         # configure BGP
         # if RR_flag is set, then RRs are present in the topology
         # ==========================================================
-        if(RR_flag):
-            # loopbacks contains loopbacks of RRs
-            configure_bgp(client, loopbacks, device)
-        else:
-            # No RRs present, each leaf peers with each spine only and vice versa
-            loopback_bgp = {}
-            if device[0]!== 'S':
+        if bgp_flag:
+            if(RR_flag):
+                # loopbacks contains loopbacks of RRs
+                loopback_bgp = {}
                 for router, loopback in loopbacks.items():
-                    if(router[0]=='L'):
+                    if 'RR' in router:
                         loopback_bgp[router] = loopback
+            else:
+                # No RRs present, each leaf peers with each spine only and vice versa
+                loopback_bgp = {}
+                if 'RR' in device:
+                    for router, loopback in loopbacks.items():
+                        if(router[0] in ['L', 'S']):
+                            loopback_bgp[router] = loopback
+                elif device[0] == 'S':
+                    for router, loopback in loopbacks.items():
+                        if(router[0]=='L'):
+                            loopback_bgp[router] = loopback
 
-            elif device[0] == 'L':
-                for router, loopback in loopbacks.items():
-                    if(router[0]=='S'):
-                        loopback_bgp[router] = loopback
+                elif device[0] == 'L':
+                    for router, loopback in loopbacks.items():
+                        if(router[0]=='S'):
+                            loopback_bgp[router] = loopback
+            print(f"For {device}, neighbors are {loopback_bgp}")
             configure_bgp(client, loopback_bgp, device)

@@ -5,6 +5,7 @@ from adjacency_matrix import match_pattern_matrix
 
 def handle_RR():
     RR_list = match_pattern_matrix('RR')
+
     if RR_list:
         return RR_list
     else:

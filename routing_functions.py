@@ -1,6 +1,6 @@
 import time
 from adjacency_matrix import host_mapping
-from common_functions import displayLine
+from common_functions import displayLine, prompt_check
 
 
 def configure_bgp(client, loopbacks, device):
@@ -10,8 +10,10 @@ def configure_bgp(client, loopbacks, device):
         device    : device for which BGP is being configured
     '''
     print(f"started bgp configuration for {device}")
-    # client.send("vtysh\r")
-    # time.sleep(.5)
+    if (prompt_check(client) == 'server'):
+        client.send("vtysh\r")
+        time.sleep(.5)
+
     client.send("configure t\r")
     time.sleep(0.5)
     client.send("router bgp 100\r")
@@ -32,14 +34,18 @@ def configure_bgp(client, loopbacks, device):
     time.sleep(0.5)
     client.send('end\r')
     time.sleep(0.5)
-    # output = client.recv(1000)
-    # print(output)
+    client.send("exit\r")
+    time.sleep(5)
+    output = client.recv(1000)
+    print(output)
     print(f"Finished bgp configuration for {device}")
 
 
 def configure_ospf(client, neighbor_IP, loopback):
-    client.send("vtysh\r")
-    time.sleep(.5)
+    if (prompt_check(client) == 'server'):
+        client.send("vtysh\r")
+        time.sleep(.5)
+    
     client.send("configure t\r")
     time.sleep(0.5)
     client.send("router ospf\r")
@@ -52,9 +58,10 @@ def configure_ospf(client, neighbor_IP, loopback):
         time.sleep(0.5)
     client.send("end")
     time.sleep(0.5)
-    # output = client.recv(1000)
-    # print(output)
-
+    client.send("exit\r")
+    time.sleep(5)
+    output = client.recv(1000)
+    print(output)
 
 def configure_bridges(client, bridge_config, connections, loopback, device):
     print("Configuring tunnels first")

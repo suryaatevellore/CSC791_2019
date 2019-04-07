@@ -12,16 +12,25 @@ def main():
     devices_list = spines + leaves
     device_loopbacks, index = create_loopbacks(devices_list, index)
     RR = handle_RR()
+    print(f"Returned from RR {RR}")
     device_ip = get_docker_ips(devices_list)
     common_terminal_config(devices_list, device_loopbacks)
     if RR:
-        RR_loopbacks = create_loopbacks(RR, index)
+        RR_loopbacks, index = create_loopbacks(RR, index)
+        print(f"RR loopbacks {RR_loopbacks}")
+        print(f"RR list {RR}")
         common_terminal_config(RR, RR_loopbacks)
-        config_via_ssh(device_ip, RR_loopbacks, 1)
         RR_IP = get_RR_IPs(RR)
-        config_via_ssh(RR_IP, device_loopbacks)
+        combined_loopbacks = {**RR_loopbacks, **device_loopbacks}
+        # configure ospf on spines and leaves including bgp neighborships for RRs
+        config_via_ssh(device_ip, combined_loopbacks, True, True, True)
+        RR_IP = get_RR_IPs(RR)
+        # configure ospf for RRs
+        config_via_ssh(RR_IP, combined_loopbacks, False, True, False)
+        # configure BGP for RRs
+        config_via_ssh(RR_IP, combined_loopbacks, False, False, True)
     else:
-        config_via_ssh(device_ip, device_loopbacks)
+        config_via_ssh(device_ip, device_loopbacks, False, True, True)
 
 
 if __name__ == "__main__":
