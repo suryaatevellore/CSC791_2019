@@ -1,6 +1,6 @@
 from pathlib import Path
-0, 1, 2, 3, 4, 5, 6
-['S3', 'eth71', '(192.168.15.1/24)', '---', 'L3', 'eth31', '(192.168.15.2/24)']
+# 0, 1, 2, 3, 4, 5, 6
+# ['S3', 'eth71', '(192.168.15.1/24)', '---', 'L3', 'eth31', '(192.168.15.2/24)']
 
 
 def create_connections(FILEPATH):
@@ -37,12 +37,12 @@ def filter_by(connections, key, device):
     if key=='IP':
         if device[0]=='S':
             for source, attrs in connections.items():
-                if source[0]=='S':
+                if source[0]=='S' and attrs[0][5][0]=='L':
                         _temp = attrs[0][1]
                         result.append(_temp[1:(len(_temp)-1)])
         elif device[0]=='L':
              for source, attrs in connections.items():
-                if source[0]=='L':
+                if source[0]=='L' and attrs[0][5][0]=='S':
                      _temp = attrs[0][1]
                      result.append(_temp[1:(len(_temp)-1)])
 

@@ -21,5 +21,3 @@ def config_via_ssh(device_list, loopbacks=None, username='root', password='root'
 
         # configure BGP
         configure_bgp(client, loopbacks, device)
-
-
