@@ -44,6 +44,7 @@ def filter_by(connections, key, device):
 
     return result
 
+
 if __name__=='__main__':
     create_neighbors()
 
