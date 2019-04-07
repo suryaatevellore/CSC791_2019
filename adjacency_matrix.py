@@ -78,5 +78,22 @@ def host_mapping(connections, bridges_list=None, number_of_tenants=1):
     return hosts_ports
 
 
+def match_pattern_matrix(pattern):
+    data_folder = Path("/home/RND-TOOL/rnd_lab/scripts/")
+    FILENAME = 'connectivitymat.txt'
+    FILEPATH = data_folder / FILENAME
+    result = []
+    with open(FILEPATH) as file:
+        data = file.readlines()
+        for item in data:
+            if pattern in item:
+                result.append(item)
+
+    if result:
+        return result
+    else:
+        return None
+
+
 if __name__ == '__main__':
     create_neighbors()

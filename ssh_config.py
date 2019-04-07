@@ -18,9 +18,15 @@ bridge_config = [
 ]
 
 
-def config_via_ssh(device_list, loopbacks=None, username='root', password='root'):
+def config_via_ssh(device_list, loopbacks=None, RR_flag=False, username='root', password='root'):
+    """
+        device_list: dictionary as device:IP
+        loopbacks  : dictionary as device:LoopbackIP
+        RR_flag    : State wheather RRs are present or not
+        username   : SSH username
+        password   : SSH password
+    """
     global bridge_config
-
     for device, ip in device_list.items():
         print("Creating ssh connection")
         ssh = paramiko.SSHClient()
@@ -29,31 +35,40 @@ def config_via_ssh(device_list, loopbacks=None, username='root', password='root'
         print(f"Interactive SSH session established to {device}")
         client = ssh.invoke_shell()
         connections = create_neighbors()
-
-        # configure_bridges
+        # ==========================================================
+        # configure_bridges only for leaves
+        # ==========================================================
         if device[0] == 'L':
             print(f"Configure bridge on {device}")
             configure_bridges(client, bridge_config, connections[device], loopbacks[device], device)
-        elif device[0] == 'S':
-            print("No need for bridges or tunnels on spines")
+        else:
+            print("No need for bridges or tunnels on spines/RRs")
 
-
-        #configure ospf
-
+        # ==========================================================
+        # configure ospf for all devices
+        # ==========================================================
         print(f"started ospf configuration for {device}")
         ospf_ips = filter_by(connections[device], 'IP', device)
         configure_ospf(client, ospf_ips, loopbacks[device])
         print(f"Finished ospf configuration for {device}")
 
+        # ==========================================================
         # configure BGP
-        loopback_bgp = {}
-        if device[0] == 'S':
-            for router, loopback in loopbacks.items():
-                if(router[0]=='L'):
-                    loopback_bgp[router] = loopback
+        # if RR_flag is set, then RRs are present in the topology
+        # ==========================================================
+        if(RR_flag):
+            # loopbacks contains loopbacks of RRs
+            configure_bgp(client, loopbacks, device)
+        else:
+            # No RRs present, each leaf peers with each spine only and vice versa
+            loopback_bgp = {}
+            if device[0]!== 'S':
+                for router, loopback in loopbacks.items():
+                    if(router[0]=='L'):
+                        loopback_bgp[router] = loopback
 
-        elif device[0] == 'L':
-            for router, loopback in loopbacks.items():
-                if(router[0]=='S'):
-                    loopback_bgp[router] = loopback
-        configure_bgp(client, loopback_bgp, device)
+            elif device[0] == 'L':
+                for router, loopback in loopbacks.items():
+                    if(router[0]=='S'):
+                        loopback_bgp[router] = loopback
+            configure_bgp(client, loopback_bgp, device)
