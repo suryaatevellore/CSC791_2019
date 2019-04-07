@@ -15,8 +15,9 @@ def config_via_ssh(device_list, loopbacks=None, username='root', password='root'
         configure_bgp(client, loopbacks)
 
         #configure ospf
+
         ospf_ips = filter_by(connections, 'IP', device)
-        configure_ospf(client, ospf_ips)
+        configure_ospf(client, ospf_ips, loopbacks[device])
 
 
 

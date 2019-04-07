@@ -28,14 +28,23 @@ def configure_bgp(client, loopbacks):
     print(output)
 
 
-def configure_ospf(client, IP):
+def configure_ospf(client, neighbor_IP, loopback):
     client.send("vtysh\r")
     time.sleep(.5)
     client.send("configure t\r")
     time.sleep(0.5)
     client.send("router ospf\r")
-    for ip_mask in IP:
-
+    for ip_mask in neighbor_IP:
+        client.send(f"network {ip_mask} area 0")
+        time.sleep(0.5)
+        client.send(f"network {loopback} area 0")
+        time.sleep(0.5)
+        client.send("passive-interface lo")
+        time.sleep(0.5)
+    client.send("end")
+    time.sleep(0.5)
+    output = client.recv(1000)
+    print(output)
 
 
 
