@@ -36,7 +36,7 @@ def configure_ospf(client, neighbor_IP, loopback):
     for ip_mask in neighbor_IP:
         client.send(f"network {ip_mask} area 0\r")
         time.sleep(0.5)
-        client.send(f"network {loopback} area 0\r")
+        client.send(f"network {loopback}/32 area 0\r")
         time.sleep(0.5)
         client.send("passive-interface lo\r")
         time.sleep(0.5)
