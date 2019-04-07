@@ -5,7 +5,8 @@ from adjacency_matrix import filter_by, create_neighbors
 
 
 def config_via_ssh(device_list, loopbacks=None, username='root', password='root'):
-
+        
+    print(f"Current device list")
     for device, ip in device_list.items():
         print("Creating ssh connection")
         ssh = paramiko.SSHClient()

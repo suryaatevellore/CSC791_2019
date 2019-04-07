@@ -16,8 +16,8 @@ def create_connections(FILEPATH):
                     connections[args[0]] = []
                     connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
 
-    # print(filter_by(connections, 'IP', 'S1'))
-    # print(connections['S1'])
+    print(filter_by(connections, 'IP', 'L1'))
+    print(connections['S1'])
     return connections
 
 
@@ -44,6 +44,7 @@ def filter_by(connections, key, device):
                         result.append(_temp[1:(len(_temp)-1)])
         elif device[0]=='L':
              for source, attrs in connections.items():
+                print(f"{attrs}")
                 if source[0]=='L' and attrs[0][0][0]=='S':
                      _temp = attrs[0][1]
                      result.append(_temp[1:(len(_temp)-1)])
