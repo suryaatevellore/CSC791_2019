@@ -34,7 +34,8 @@ def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
                 # if host number is odd, add to bridge1
                 # if host number is even, add to bridge2
                 connections = create_neighbors()
-                hosts = host_mapping(connections[device])
+                bridges_list = ['t1', 't2']
+                hosts = host_mapping(connections[device], bridges_list)
                 for entry in hosts:
                     completed = subprocess.run(f"sudo docker exec -d {device} 'brctl addif {entry[2]} {entry[1]}", shell=True, stdout=subprocess.PIPE)
                     print(completed.stdout.decode('utf-8').strip())
