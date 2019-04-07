@@ -15,6 +15,7 @@ def config_via_ssh(device_list, loopbacks=None, username='root', password='root'
         client = ssh.invoke_shell()
 
         #configure ospf
+        connections = create_neighbors()
         ospf_ips = filter_by(connections, 'IP', device)
         configure_ospf(client, ospf_ips, loopbacks[device])
 
