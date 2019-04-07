@@ -1,6 +1,8 @@
 import time
 import paramiko
 from routing_functions import configure_bgp, configure_ospf
+from adjacency_matrix import filter_by
+
 
 def config_via_ssh(device_list, loopbacks=None, username='root', password='root'):
 

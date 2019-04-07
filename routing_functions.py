@@ -1,6 +1,4 @@
 import time
-from adjacency_matrix import filter_by
-
 
 def configure_bgp(client, loopbacks):
     client.send("vtysh\r")
