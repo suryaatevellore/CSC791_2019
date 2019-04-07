@@ -19,4 +19,6 @@ def handle_RR(device_list, index):
 
 
 def get_RR_IPs(RR):
-    get_docker_ips(RR)
+    RR_ip = get_docker_ips(RR)
+    return RR_ip
+
