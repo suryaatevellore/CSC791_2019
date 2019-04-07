@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 bridge_config = """
 'brctl addbr t1',
@@ -25,6 +26,5 @@ def common_terminal_config(device_list, Loopbacks=None, device_ip=None):
                 print(f"sudo docker exec -d {device} /bin/bash -c {line.strip()}")
                 os.system(f"sudo docker exec -d {device} bash -c 'ip link add tun1 type vxlan id 100 dstport 4789 local {Loopbacks[device]} nolearning'")
                 os.system(f"sudo docker exec -d {device} bash -c 'ip link add tun2 type vxlan id 200 dstport 4789 local {Loopbacks[device]} nolearning'")
-                completed = subprocess.run("sudo docker exec -d {device} /bin/bash -c {line.strip()}", shell=True, stdout=subprocess.PIPE)
+                completed = subprocess.run(f"sudo docker exec -d {device} /bin/bash -c {line.strip()}", shell=True, stdout=subprocess.PIPE)
                 print(completed.stdout.decode('utf-8').strip())
-                print(os.system(f"sudo docker exec -d {device} /bin/bash -c {line.strip()}"))
