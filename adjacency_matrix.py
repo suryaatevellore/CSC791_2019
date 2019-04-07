@@ -2,6 +2,8 @@ from pathlib import Path
 # 0, 1, 2, 3, 4, 5, 6
 # ['S3', 'eth71', '(192.168.15.1/24)', '---', 'L3', 'eth31', '(192.168.15.2/24)']
 
+# source, localport, localip, --, dst, dstport, dstip
+# 0         1           2       3  4     5       6
 
 def create_connections(FILEPATH):
     connections = {}
@@ -9,12 +11,16 @@ def create_connections(FILEPATH):
         for line in file:
             args = line.strip().split()
             if len(args) > 5:
-                # arguments in the form of (destname, localip, local port, destip, dest port)
-                if args[0] in connections.keys():
-                    connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
-                else:
-                    connections[args[0]] = []
-                    connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
+                # initialise for spines
+                for args[0] in line:
+                    if args[0] in connections.keys() and args[4] in connections.keys():
+                        connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
+                        connections[args[4]].append((args[0], args[6], args[5], args[2], args[1]))
+                    else:
+                        connections[args[0]] = []
+                        connections[args[0]].append((args[4], args[2], args[1], args[6], args[5]))
+                        connections[args[0]] = []
+                        connections[args[4]].append((args[0], args[6], args[5], args[2], args[1]))
 
     print(filter_by(connections, 'IP', 'L1'))
     print(connections['S1'])
