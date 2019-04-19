@@ -1,7 +1,9 @@
 import subprocess
 import time
 import re
-
+import sys
+from pathlib import Path
+from adjacency_matrix import match_pattern_matrix
 
 def create_loopbacks(device_list, index):
     Loopbacks = {}
@@ -80,15 +82,29 @@ def get_RR_IPs(RR):
 
 
 def tenant_leaf_mapping():
-    results = []
+    mapping = {}
     data_folder = Path("/home/RND-TOOL/rnd_lab/scripts/")
     FILENAME = 'tenant.txt'
     FILEPATH = data_folder / FILENAME
-    regex = ur"(.*),\s(.*}),\s(.*})"
-    line = "President [P] Barack Obama [/P] met Microsoft founder [P] Bill Gates [/P], yesterday."
-    person = re.findall(pattern, line)
+    leaf_regex = r'{([A-Za-z\d]+-[A-Za-z]\d{1,4})?}'
+    tenant_regex = r'[a-zA-Z\d]+-[A-Za-z]\d{.*?}'
     with open(FILEPATH, "r+") as file:
-        data = file.read()
-        data = re.findall(pattern, data)
-    print(data)
-
+        for line in file:
+            leaf = re.findall(leaf_regex, line)
+            if not leaf:
+                print("Either leaf names are not specified, or their formatting is incorrect")
+                sys.exit(1)
+            l_name, l_id = leaf[0].strip().split("-")
+            mapping[l_id] = {}
+            tenants = re.findall(tenant_regex, line)
+            if not tenants:
+                print("Either tenant names are not specified, or their formatting is incorrect")
+                sys.exit(1)
+            for tenant in tenants:
+                tenant = tenant[tenant.index("-")+1:]
+                t_id, remaining = tenant.split("{")
+                remaining = remaining[:-1]           # gets rid of the last }
+                hosts = remaining.split(",")
+                mapping[l_id][t_id] = hosts
+                
+    return mapping
