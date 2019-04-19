@@ -1,8 +1,7 @@
 import sys
 from ssh_config import config_via_ssh
 from docker_cmd_config import common_terminal_config
-from common_functions import create_loopbacks, get_docker_ips
-from helper_functions import handle_device, get_RR_IPs, tenant_leaf_mapping
+from common_functions import create_loopbacks, get_docker_ips, handle_device, get_RR_IPs, tenant_leaf_mapping
 
 
 def main():
