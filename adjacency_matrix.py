@@ -92,17 +92,14 @@ def match_pattern_matrix(pattern):
     FILEPATH = data_folder / FILENAME
     _temp = set()
     with open(FILEPATH) as file:
-        print(file[0])
-        data = file.readlines()
-        for item in data:
-            print(item)
-            # handles that readlines would give back full lines
-            item = item.split()
-            for entry in item:
-                if pattern in entry:
-                    _temp.add(entry)
+        data = file.readline().strip() # first line of adjacency matrix 
+        data = data.split() # currently split by spaces
+        for entry in data:
+            if pattern in entry:
+                _temp.add(entry)
 
     if _temp:
+        print(_temp)
         return list(_temp)
     else:
         return None
