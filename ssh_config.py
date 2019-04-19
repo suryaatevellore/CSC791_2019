@@ -51,7 +51,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
             print(f"started ospf configuration for {device}")
             ospf_ips = filter_by(connections[device], 'IP', device)
             print(f"Connected IPs for {device} are {ospf_ips}")
-            configure_ospf(client, ospf_ips, loopbacks[device])
+            configure_ospf(client, ospf_ips, loopbacks[device], device)
             print(f"Finished ospf configuration for {device}")
 
         # ==========================================================

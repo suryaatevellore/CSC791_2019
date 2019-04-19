@@ -1,5 +1,7 @@
 import subprocess
 import time
+import re
+
 
 def create_loopbacks(device_list, index):
     Loopbacks = {}
@@ -25,12 +27,15 @@ def displayLine():
 
 
 def prompt_check(client):
-    client.send("\r")
-    time.sleep(0.5)
+    time.sleep(1)
     output = client.recv(1000)
+    time.sleep(0.5)
     print(f"Checking for prompt {output}")
     router_prompt = output.decode('utf-8')
-    if 'root@' in router_prompt:
-        return 'server'
+    searchObj = re.search( r'Welcome to Ubuntu', router_prompt, re.M|re.I)
+    if searchObj:
+        print("Welcome to ubuntu found")
+        return 1
+    else:
+        return 0
     
-    return 'router'
