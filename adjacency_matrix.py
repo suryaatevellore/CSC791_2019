@@ -92,8 +92,10 @@ def match_pattern_matrix(pattern):
     FILEPATH = data_folder / FILENAME
     _temp = set()
     with open(FILEPATH) as file:
+        print(file[0])
         data = file.readlines()
         for item in data:
+            print(item)
             # handles that readlines would give back full lines
             item = item.split()
             for entry in item:
