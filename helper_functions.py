@@ -3,13 +3,15 @@ from common_functions import get_docker_ips
 from adjacency_matrix import match_pattern_matrix
 
 
-def handle_RR():
-    RR_list = match_pattern_matrix('RR')
+def handle_device(pattern):
+    if 'spine' in pattern:
+        result = match_pattern_matrix('S')
+    elif 'lea' in pattern:
+        result = match_pattern_matrix('L')
+    elif 'RR' in pattern:
+        result = match_pattern_matrix('RR')
 
-    if RR_list:
-        return RR_list
-    else:
-        return None
+    return result
 
 
 def get_RR_IPs(RR):
