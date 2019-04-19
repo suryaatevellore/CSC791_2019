@@ -17,7 +17,6 @@ bridge_config = [
 'ip link set up dev tun2'
 ]
 
-
 def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_flag=False, username='root', password='root'):
     """
         device_list: dictionary as device:IP
@@ -83,3 +82,5 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
                             loopback_bgp[router] = loopback
             print(f"For {device}, neighbors are {loopback_bgp}")
             configure_bgp(client, loopback_bgp, device)
+            print("Closing ospf connection")
+            client.close()
