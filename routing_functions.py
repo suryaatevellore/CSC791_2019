@@ -9,6 +9,7 @@ def configure_bgp(client, loopbacks, device):
         loopbacks : dictionary as BGPneighbor:loopbacks
         device    : device for which BGP is being configured
     '''
+    set_prompt(client, 'router')
     print(f"started bgp configuration for {device}")
     client.send("configure t\r")
     time.sleep(0.5)
@@ -28,7 +29,7 @@ def configure_bgp(client, loopbacks, device):
             time.sleep(0.5)
     client.send('advertise-all-vni\r')
     time.sleep(0.5)
-    client.send('end\r')
+    client.send('\rend\r')
     time.sleep(0.5)
     client.send("exit\r")
     time.sleep(5)
@@ -38,17 +39,11 @@ def configure_bgp(client, loopbacks, device):
 
 
 def configure_ospf(client, neighbor_IP, loopback, device):
-    if (device[0]=='S' or 'RR' in device):
-        if (prompt_check(client) == 1):
-            client.send("vtysh\r")
-            print("sending vtysh for ospf")
-            time.sleep(.5)
-        else:
-            print("Already in router mode")
-    else:
-        client.send("vtysh\r")
-        time.sleep(.5)
+    """
+        Configure OSPF on the devices
 
+    """
+    set_prompt(client, 'router')
     client.send("configure t\r")
     time.sleep(0.5)
     client.send("router ospf\r")

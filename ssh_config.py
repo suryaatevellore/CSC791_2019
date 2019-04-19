@@ -3,6 +3,7 @@ import paramiko
 from routing_functions import configure_bgp, configure_ospf, configure_bridges
 from adjacency_matrix import filter_by
 from adjacency_matrix import create_neighbors
+from common_functions import displayLine
 
 bridge_config = [
 'brctl addbr t1',
@@ -47,6 +48,9 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         # configure ospf for all devices
         # ==========================================================
         if ospf_flag:
+            displayLine()
+            print("OSPF flag is set")
+            displayLine()
             print(f"started ospf configuration for {device}")
             ospf_ips = filter_by(connections[device], 'IP', device)
             print(f"Connected IPs for {device} are {ospf_ips}")
@@ -59,12 +63,18 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         # ==========================================================
         if bgp_flag:
             if(RR_flag):
+                displayLine()
+                print("bgp and RR flag is set")
+                displayLine()
                 # loopbacks contains loopbacks of RRs
                 loopback_bgp = {}
                 for router, loopback in loopbacks.items():
                     if 'RR' in router:
                         loopback_bgp[router] = loopback
             else:
+                displayLine()
+                print("bgp flag is set, RR flag is not set")
+                displayLine()
                 # No RRs present, each leaf peers with each spine only and vice versa
                 loopback_bgp = {}
                 if 'RR' in device:
@@ -82,5 +92,6 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
                             loopback_bgp[router] = loopback
             print(f"For {device}, neighbors are {loopback_bgp}")
             configure_bgp(client, loopback_bgp, device)
-            print("Closing ospf connection")
-            client.close()
+
+        print("Closing SSH connection")
+        client.close()
