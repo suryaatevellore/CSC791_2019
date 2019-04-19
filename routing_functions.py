@@ -12,7 +12,10 @@ def configure_bgp(client, loopbacks, device):
     print(f"started bgp configuration for {device}")
     if (prompt_check(client) == 'server'):
         client.send("vtysh\r")
+        print("Server mode, sending vtysh")
         time.sleep(.5)
+    else:
+        print("Already in router mode==========")
 
     client.send("configure t\r")
     time.sleep(0.5)
@@ -44,7 +47,10 @@ def configure_bgp(client, loopbacks, device):
 def configure_ospf(client, neighbor_IP, loopback):
     if (prompt_check(client) == 'server'):
         client.send("vtysh\r")
+        print("sending vtysh for ospf")
         time.sleep(.5)
+    else:
+        print("Already in router mode")
     
     client.send("configure t\r")
     time.sleep(0.5)

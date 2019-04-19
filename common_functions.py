@@ -27,8 +27,10 @@ def displayLine():
 def prompt_check(client):
     client.send("\r")
     time.sleep(0.5)
-    output = client.recv(100)
-    if 'root@' in output:
+    output = client.recv(1000)
+    print(f"Checking for prompt {output}")
+    router_prompt = output.decode('utf-8')
+    if 'root@' in router_prompt:
         return 'server'
     
     return 'router'
