@@ -1,3 +1,4 @@
+import sys
 from ssh_config import config_via_ssh
 from docker_cmd_config import common_terminal_config
 from common_functions import create_loopbacks, get_docker_ips
@@ -5,13 +6,21 @@ from helper_functions import handle_RR, get_RR_IPs
 
 
 def main():
-    spines = ['S' + str(i) for i in range(1, 5)]
-    leaves = ['L' + str(i) for i in range(1, 7)]
-    index = 1
+    spines = handle_device('spine')
+    if not spines:
+        print("Unable to extract spine information from adjacency matrix. Device names should start with S")
+        sys.exit(1)
 
+    leaves = handle_device('leaves')
+    if not leaves:
+         print("Unable to extract spine information from adjacency matrix. Device names should start with L")
+        sys.exit(1)
+
+    index = 1 # global counter for loopback indexes
     devices_list = spines + leaves
     device_loopbacks, index = create_loopbacks(devices_list, index)
-    RR = handle_RR()
+    # If RRs are not specified in the adjacency matrix, a random spine is chosen as the RR
+    RR = handle_device('RR')
     device_ip = get_docker_ips(devices_list)
     common_terminal_config(devices_list, device_loopbacks)
     if RR:
