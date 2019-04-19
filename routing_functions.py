@@ -1,6 +1,6 @@
 import time
 from adjacency_matrix import host_mapping
-from common_functions import displayLine, prompt_check
+from common_functions import displayLine, set_prompt
 
 
 def configure_bgp(client, loopbacks, device):
@@ -9,7 +9,6 @@ def configure_bgp(client, loopbacks, device):
         loopbacks : dictionary as BGPneighbor:loopbacks
         device    : device for which BGP is being configured
     '''
-    set_prompt(client, 'router')
     print(f"started bgp configuration for {device}")
     client.send("configure t\r")
     time.sleep(0.5)
@@ -29,13 +28,6 @@ def configure_bgp(client, loopbacks, device):
             time.sleep(0.5)
     client.send('advertise-all-vni\r')
     time.sleep(0.5)
-    client.send('\rend\r')
-    time.sleep(0.5)
-    client.send("exit\r")
-    time.sleep(5)
-    output = client.recv(1000)
-    print(output)
-    print(f"Finished bgp configuration for {device}")
 
 
 def configure_ospf(client, neighbor_IP, loopback, device):
@@ -43,7 +35,6 @@ def configure_ospf(client, neighbor_IP, loopback, device):
         Configure OSPF on the devices
 
     """
-    set_prompt(client, 'router')
     client.send("configure t\r")
     time.sleep(0.5)
     client.send("router ospf\r")
@@ -56,10 +47,6 @@ def configure_ospf(client, neighbor_IP, loopback, device):
         time.sleep(0.5)
     client.send("end")
     time.sleep(0.5)
-    client.send("exit\r")
-    time.sleep(5)
-    output = client.recv(1000)
-    print(output)
 
 def configure_bridges(client, bridge_config, connections, loopback, device):
     print("Configuring tunnels first")
