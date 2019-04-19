@@ -2,7 +2,7 @@ import sys
 from ssh_config import config_via_ssh
 from docker_cmd_config import common_terminal_config
 from common_functions import create_loopbacks, get_docker_ips
-from helper_functions import handle_RR, get_RR_IPs
+from helper_functions import handle_device, get_RR_IPs
 
 
 def main():
@@ -14,7 +14,7 @@ def main():
     leaves = handle_device('leaves')
     if not leaves:
          print("Unable to extract spine information from adjacency matrix. Device names should start with L")
-        sys.exit(1)
+         sys.exit(1)
 
     index = 1 # global counter for loopback indexes
     devices_list = spines + leaves
