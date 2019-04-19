@@ -3,7 +3,7 @@ import paramiko
 from routing_functions import configure_bgp, configure_ospf, configure_bridges
 from adjacency_matrix import filter_by
 from adjacency_matrix import create_neighbors
-from common_functions import displayLine
+from common_functions import displayLine, set_prompt
 
 bridge_config = [
 'brctl addbr t1',
@@ -34,12 +34,16 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         ssh.connect(ip, username=username, password=password)
         print(f"Interactive SSH session established to {device}")
         client = ssh.invoke_shell()
+        time.sleep(0.5)
+        initial_prompt = client.recv(1000);
+        time.sleep(0.5)
         connections = create_neighbors()
         # ==========================================================
         # configure_bridges only for leaves
         # ==========================================================
         if device[0] == 'L':
             print(f"Configure bridge on {device}")
+            set_prompt(client, initial_prompt, 'server')
             configure_bridges(client, bridge_config, connections[device], loopbacks[device], device)
         else:
             print("No need for bridges or tunnels on spines/RRs")
@@ -51,6 +55,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
             displayLine()
             print("OSPF flag is set")
             displayLine()
+            set_prompt(client, initial_prompt, 'router')
             print(f"started ospf configuration for {device}")
             ospf_ips = filter_by(connections[device], 'IP', device)
             print(f"Connected IPs for {device} are {ospf_ips}")
@@ -91,6 +96,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
                         if(router[0]=='S'):
                             loopback_bgp[router] = loopback
             print(f"For {device}, neighbors are {loopback_bgp}")
+            set_prompt(client, initial_prompt, 'router')
             configure_bgp(client, loopback_bgp, device)
 
         print("Closing SSH connection")

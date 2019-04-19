@@ -26,24 +26,21 @@ def displayLine():
     print("="*30)
 
 
-def check_prompt(client):
-    time.sleep(1)
-    output = client.recv(1000)
-    time.sleep(0.5)
-    print(f"Checking for prompt {output}")
-    router_prompt = output.decode('utf-8')
+def check_prompt(initial_prompt):
+    print(f"Checking for prompt {initial_prompt}")
+    router_prompt = initial_prompt.decode('utf-8')
     searchObj = re.search( r'Welcome to Ubuntu', router_prompt, re.M|re.I)
     if searchObj:
         # 1 is server prompt
-        print("Welcome to ubuntu found")
+        print("Welcome to Ubuntu found")
         return 1
     else:
         # 0 is router prompt
         return 0
 
 
-def set_prompt(client, prompt_type):
-    _local_prompt = check_prompt(client)
+def set_prompt(client, initial_prompt, prompt_type):
+    _local_prompt = check_prompt(initial_prompt)
     if(prompt_type == 'router'):
         if(_local_prompt == 1):
             # prompt is server
