@@ -67,8 +67,10 @@ def filter_by(connections, key, device):
 def get_host_mapping(connections, hosts):
     # hostname, localport, bridge_id
     ports = {}
+    print(f"Recieved {hosts} connectivity")
     for host in hosts:
         for connection in connections:
+            print(f"Connection found {connection}")
             if connection[0][0] == host:
                 ports[connection[2]] = connection[1]
 
