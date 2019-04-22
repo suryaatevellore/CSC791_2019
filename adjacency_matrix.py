@@ -70,9 +70,12 @@ def get_host_mapping(connections, hosts):
     print(f"Recieved {hosts} connectivity")
     for host in hosts:
         for connection in connections:
-            print(f"Connection found {connection}")
-            if connection[0][0] == host:
-                ports[connection[2]] = connection[1]
+            print(f"Testing {connection[0]} aganst {host} ")
+            if connection[0] == host:
+                ip = ''.join(connection[1])
+                ip = ip[1:-1]
+                print(ip)
+                ports[connection[2]] = ip
 
     return ports
 
