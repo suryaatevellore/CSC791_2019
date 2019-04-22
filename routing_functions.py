@@ -48,32 +48,41 @@ def configure_ospf(client, neighbor_IP, loopback, device):
     client.send("end")
     time.sleep(0.5)
 
-def configure_bridges(client, bridge_config, connections, loopback, device):
-    print("Configuring tunnels first")
-    client.send("\r")
-    time.sleep(0.5)
-    client.send(f"ip link add tun1 type vxlan id 100 dstport 4789 local {loopback} nolearning\r")
-    time.sleep(0.5)
-    output = client.recv(1000)
-    print(f"First tunnel config {output}")
-    client.send(f"ip link add tun2 type vxlan id 200 dstport 4789 local {loopback} nolearning\r")
-    time.sleep(0.5)
-    for line in bridge_config:
-        print(f"Command being sent {line}")
-        client.send(f"{line}\r")
-        time.sleep(0.5)
-        output = client.recv(1000);
-        print(f"Bridge config: {output}")
 
-    bridges_list = ['t1', 't2']
+bridge_config = [
+'brctl addbr t1',
+'brctl addbr t2',
+'ip link set up dev t1',
+'ip link set up dev t2',
+'brctl stp t1 off',
+'brctl stp t2 off',
+'brctl addif t1 tun1',
+'brctl addif t2 tun2',
+'ip link set up dev tun1',
+'ip link set up dev tun2'
+]
+
+
+def configure_bridges(client, t2l_mapping, connections, loopback, device):
+    # Bridges names are equal to
+    bridges_list = list(t2l_mapping.values())
+    pass
+
+    # hosts interfaces configuration
     hosts = host_mapping(connections, bridges_list)
     print(f"Host directory {hosts}")
     for entry in hosts:
-        displayLine()
-        print(f"Configuring {entry}, bridge {entry[2]}, interface {entry[1]} on {device}\r")
-        displayLine()
         client.send(f"brctl addif {entry[2]} {entry[1]}\r")
         time.sleep(0.5)
         output = client.recv(1000)
         print(output)
         print("Configuring client interfaces on bridges")
+
+
+def vxlan_id():
+    pass
+
+
+def configure_tunnels(client, tenant_mapping, loopback, device):
+    # each leaf will have different configuration
+    pass

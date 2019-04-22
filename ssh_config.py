@@ -5,18 +5,6 @@ from adjacency_matrix import filter_by
 from adjacency_matrix import create_neighbors
 from common_functions import displayLine, set_prompt
 
-bridge_config = [
-'brctl addbr t1',
-'brctl addbr t2',
-'ip link set up dev t1',
-'ip link set up dev t2',
-'brctl stp t1 off',
-'brctl stp t2 off',
-'brctl addif t1 tun1',
-'brctl addif t2 tun2',
-'ip link set up dev tun1',
-'ip link set up dev tun2'
-]
 
 def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_flag=False, username='root', password='root'):
     """
@@ -42,9 +30,13 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         # configure_bridges only for leaves
         # ==========================================================
         if device[0] == 'L':
+            # Will need to configure tunnels and bridges according to
+            # the tenant mapping
             print(f"Configure bridge on {device}")
             set_prompt(client, initial_prompt, 'server')
-            configure_bridges(client, bridge_config, connections[device], loopbacks[device], device)
+            t2l_mapping = tenant_leaf_mapping()
+            configure_tunnels(client, t2l_mapping[device], loopbacks[device], device)
+            configure_bridges(client, t2l_mapping, connections[device], loopbacks[device], device)
         else:
             print("No need for bridges or tunnels on spines/RRs")
 

@@ -5,8 +5,6 @@ from common_functions import create_loopbacks, get_docker_ips, handle_device, ge
 
 
 def main():
-    t2l_mapping = tenant_leaf_mapping()
-    print(t2l_mapping)
     spines = handle_device('spine')
     if not spines:
         print("Unable to extract spine information from adjacency matrix. Device names should start with S")
