@@ -86,14 +86,13 @@ def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections)
         time.sleep(0.5)
         client.send(f"brctl addif {bridge_names[t_name]} {tunnel_name}\r")
         time.sleep(0.5)
-        print(f"Host Mapping {host_mapping}")
         for switch_port, switch_ip in host_mapping.items():
             client.send(f"brctl addif {bridge_names[t_name]} {switch_port}\r ")
             time.sleep(0.5)
             client.send(f"ip addr del {switch_ip} dev {switch_port}\r")
             time.sleep(0.5)
-        output = client.recv(1000)
-        print(f"Bridges configuration {output}")
+        # output = client.recv(1000)
+        # print(f"Bridges configuration {output}")
 
 
 def get_vxlan_id(tenants, index=10):

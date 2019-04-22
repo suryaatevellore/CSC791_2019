@@ -74,7 +74,6 @@ def get_host_mapping(connections, hosts):
             if connection[0] == host:
                 ip = ''.join(connection[1])
                 ip = ip[1:-1]
-                print(ip)
                 ports[connection[2]] = ip
 
     return ports
