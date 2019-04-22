@@ -1,6 +1,5 @@
 import sys
 from ssh_config import config_via_ssh
-from docker_cmd_config import common_terminal_config
 from common_functions import create_loopbacks, get_docker_ips, handle_device, get_RR_IPs, tenant_leaf_mapping
 
 
@@ -21,10 +20,10 @@ def main():
     # If RRs are not specified in the adjacency matrix, a random spine is chosen as the RR
     RR = handle_device('RR')
     device_ip = get_docker_ips(devices_list)
-    common_terminal_config(devices_list, device_loopbacks)
+    # common_terminal_config(devices_list, device_loopbacks)
     if RR:
         RR_loopbacks, index = create_loopbacks(RR, index)
-        common_terminal_config(RR, RR_loopbacks)
+        # common_terminal_config(RR, RR_loopbacks)
         RR_IP = get_RR_IPs(RR)
         combined_loopbacks = {**RR_loopbacks, **device_loopbacks}
         # configure ospf and bgp on spines and leaves

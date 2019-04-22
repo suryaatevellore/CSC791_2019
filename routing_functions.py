@@ -1,4 +1,5 @@
 import time
+import os
 from adjacency_matrix import get_host_mapping
 from common_functions import displayLine, set_prompt
 
@@ -85,10 +86,10 @@ def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections)
         time.sleep(0.5)
         client.send(f"ip link set {tunnel_name} up\r")
         time.sleep(0.5)
-        client.send(f"brctl add {bridge_names[t_name]} {tunnel_name}\r}")
+        client.send(f"brctl add {bridge_names[t_name]} {tunnel_name}\r")
         time.sleep(0.5)
         for switch_port, switch_ip in host_mapping.items():
-            client.send(f"brctl add {bridge_names[t_name]} {switch_port}\r}")
+            client.send(f"brctl add {bridge_names[t_name]} {switch_port}\r ")
             time.sleep(0.5)
             client.send(f"ip addr del {switch_ip} dev {switch_port}\r")
             time.sleep(0.5)
@@ -97,7 +98,7 @@ def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections)
 
 
 def get_vxlan_id(tenants, index=10):
-    return {(value:index+key)for key, value in enumerate(tenants)}
+    return {(value, index+key)for key, value in enumerate(tenants)}
 
 
 def get_tunnel_name(bridge):
@@ -119,5 +120,5 @@ def install_bridge_utils(device):
 
 def configure_loopbacks(client, device, loopback):
     print(f"Configure {loopback} as {device} loopback")
-    client.send("ip addr add {loopback}/32 dev lo\r")
+    client.send(f"ip addr add {loopback}/32 dev lo\r")
     time.sleep(0.5)

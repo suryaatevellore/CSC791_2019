@@ -1,9 +1,9 @@
 import time
 import paramiko
-from routing_functions import configure_bgp, configure_ospf, configure_loopbacks, configure_overlay,install_bridge_utils
+from routing_functions import configure_bgp, configure_ospf, configure_loopbacks, configure_overlay,install_bridge_utils, get_vxlan_id, get_tenants
 from adjacency_matrix import filter_by
 from adjacency_matrix import create_neighbors
-from common_functions import displayLine, set_prompt
+from common_functions import displayLine, set_prompt, tenant_leaf_mapping
 
 
 def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_flag=False, username='root', password='root'):
@@ -26,6 +26,9 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         time.sleep(0.5)
         connections = create_neighbors()
 
+        t2l_mapping = tenant_leaf_mapping();
+        tenants = get_tenants(t2l_mapping)
+        vx_id = get_vxlan_id(tenants);
         # ==========================================================
         # configure_loopbacks on all devices
         # ==========================================================
@@ -37,10 +40,11 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         if device[0] == 'L':
             # Will need to configure tunnels and bridges according to
             # the tenant mapping
+            
             install_bridge_utils(device)
             print(f"Configure bridge on {device}")
             set_prompt(client, initial_prompt, 'server')
-            print(f"Connection {connections}")
+            configure_overlay(client, t2l_mapping[device], vx_id, loopbacks[device], device, connections[device])
         else:
             print("No need for bridges or tunnels on spines/RRs")
 
