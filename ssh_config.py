@@ -1,6 +1,6 @@
 import time
 import paramiko
-from routing_functions import configure_bgp, configure_ospf, configure_bridges
+from routing_functions import configure_bgp, configure_ospf, configure_loopbacks, configure_overlay,install_bridge_utils
 from adjacency_matrix import filter_by
 from adjacency_matrix import create_neighbors
 from common_functions import displayLine, set_prompt
@@ -14,7 +14,6 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         username   : SSH username
         password   : SSH password
     """
-    global bridge_config
     for device, ip in device_list.items():
         print("Creating ssh connection")
         ssh = paramiko.SSHClient()
@@ -23,25 +22,25 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         print(f"Interactive SSH session established to {device}")
         client = ssh.invoke_shell()
         time.sleep(0.5)
-        initial_prompt = client.recv(1000);
+        initial_prompt = client.recv(1000)
         time.sleep(0.5)
         connections = create_neighbors()
-        print(connections)
+
+        # ==========================================================
+        # configure_loopbacks on all devices
+        # ==========================================================
+        configure_loopbacks(client, device, loopbacks[device])
         # ==========================================================
         # configure_bridges only for leaves
+        # install bridge_utils too
         # ==========================================================
         if device[0] == 'L':
             # Will need to configure tunnels and bridges according to
             # the tenant mapping
+            install_bridge_utils(device)
             print(f"Configure bridge on {device}")
             set_prompt(client, initial_prompt, 'server')
             print(f"Connection {connections}")
-            #t2l_mapping = tenant_leaf_mapping()
-            #tenants = get_tenants(t2l_mapping)
-            # vx_id contains tenant: vx_id
-            # assume bridge names to be the same as tenants
-            # vx_id = get_vx_id(tenants)
-            # configure_overlay(client, t2l_mapping[device], loopbacks[device], device, connections[device])
         else:
             print("No need for bridges or tunnels on spines/RRs")
 

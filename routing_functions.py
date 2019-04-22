@@ -1,5 +1,5 @@
 import time
-from adjacency_matrix import host_mapping
+from adjacency_matrix import get_host_mapping
 from common_functions import displayLine, set_prompt
 
 
@@ -49,67 +49,60 @@ def configure_ospf(client, neighbor_IP, loopback, device):
     time.sleep(0.5)
 
 
-bridge_config = [
-'brctl addbr t1',
-'brctl addbr t2',
-'ip link set up dev t1',
-'ip link set up dev t2',
-'brctl stp t1 off',
-'brctl stp t2 off',
-'brctl addif t1 tun1',
-'brctl addif t2 tun2',
-'ip link set up dev tun1',
-'ip link set up dev tun2'
-]
-
-
-ip link add t1ns1 type vxlan id 100 dstport 4789 local 1.1.1.1
-
-
-def configure_overlay(client, t2l_mapping, vx_id, loopback, device):
-    # Bridges names are equal to
+def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections):
+    """
+        client: Paramiko object for device
+        t2l_mapping : Tenant and hosts attached to device
+        vx_id : Global tenant to VXLAN ID mapping
+        loopback : loopback of device
+        device : device name
+        connections : What is this device connected to and how ?
+    """
 
     # Steps
-    # Find bridge names. has to be one per tenant
-    # set bridge interfaces up
-    # attach hosts to bridges
-    # configure tunnels and attach to bridges
+    # configure the bridge
+    # bring the bridge interface up
+    # configure the tunnel
+    # bring the tunnel interface up
+    # add the tunnel interface to the bridge
+    # configure the host ports
+    # remove ip from the host ports
 
-    # get all the tenants in this device
-    bridges = t2l_mapping.keys()
-    host_mapping(connections, bridges)
+    bridge_names = {(tenant, 'BR'+str(index+1)) for index,tenant in enumerate(t2l_mapping.keys())}
+    print(f"Bridge names {bridge_names}")
     for t_name, hosts in t2l_mapping.items():
 
+        tunnel_name = get_tunnel_name(bridge_names[t_name])
+        host_mapping = get_host_mapping(connections, hosts)
 
-
-    for bridge in bridges:
-        client.send(f"brctl addbr {bridge}\r")
+        client.send(f"brctl addbr {bridge_names[t_name]}\r")
         time.sleep(0.5)
-        client.send(f"ip link set up dev {bridge}\r")
+        client.send(f"ip link set up dev {bridge_names[t_name]}\r")
         time.sleep(0.5)
-        client.send(f"brctl stp {bridge} off\r")
+        client.send(f"brctl stp {bridge_names[t_name]} off\r")
         time.sleep(0.5)
+        client.send(f"ip link add {tunnel_name} type vxlan id {vx_id[t_name]} dstport 4789 local {loopback} nolearning\r")
+        time.sleep(0.5)
+        client.send(f"ip link set {tunnel_name} up\r")
+        time.sleep(0.5)
+        client.send(f"brctl add {bridge_names[t_name]} {tunnel_name}\r}")
+        time.sleep(0.5)
+        for switch_port, switch_ip in host_mapping.items():
+            client.send(f"brctl add {bridge_names[t_name]} {switch_port}\r}")
+            time.sleep(0.5)
+            client.send(f"ip addr del {switch_ip} dev {switch_port}\r")
+            time.sleep(0.5)
         output = client.recv(1000)
         print(f"Bridges configuration {output}")
 
-    """hosts = host_mapping(connections, bridges_list)
-    print(f"Host directory {hosts}")
-    for entry in hosts:
-        client.send(f"brctl addif {entry[2]} {entry[1]}\r")
-        time.sleep(0.5)
-        output = client.recv(1000)
-        print(output)
-        print("Configuring client interfaces on bridges")
-    """
 
 def get_vxlan_id(tenants, index=10):
     return {(value:index+key)for key, value in enumerate(tenants)}
 
-def get_tunnels(bridges):
-    return ['tun'+str(index) for index in range(len(bridges))]
 
-def configure_tunnels(client, tenant_mapping, loopback, device):
-    # each leaf will have different configuration
+def get_tunnel_name(bridge):
+    return 'tun' + bridge[-1]
+
 
 def get_tenants(t2l_mapping):
     tenant_set = set()
@@ -118,3 +111,13 @@ def get_tenants(t2l_mapping):
             tenant_set.add(t_name)
 
     return tenant_set
+
+
+def install_bridge_utils(device):
+    os.system(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'")
+
+
+def configure_loopbacks(client, device, loopback):
+    print(f"Configure {loopback} as {device} loopback")
+    client.send("ip addr add {loopback}/32 dev lo\r")
+    time.sleep(0.5)

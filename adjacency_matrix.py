@@ -1,12 +1,5 @@
 from pathlib import Path
-# 0, 1, 2, 3, 4, 5, 6
-# ['S3', 'eth71', '(192.168.15.1/24)', '---', 'L3', 'eth31', '(192.168.15.2/24)']
 
-# source, localport, localip, --, dst, dstport, dstip
-# 0         1           2       3  4     5       6
-
-
-# dst, localip, localport, dstip, dstport
 
 def create_connections(FILEPATH):
     connections = {}
@@ -71,19 +64,15 @@ def filter_by(connections, key, device):
     return result
 
 
-def host_mapping(connections, bridges_list=None, number_of_tenants=1):
+def get_host_mapping(connections, hosts):
     # hostname, localport, bridge_id
-    hosts_ports = []
-    index = 0
-    number_of_bridges = len(bridges_list)
-    for entry in connections:
-        if entry[0][0] == 'H':
-            hosts_ports.append((entry[0], entry[2], bridges_list[index]))
-            index += 1
-            if index == (number_of_bridges):
-                index = 0
+    ports = {}
+    for host in hosts:
+        for connection in connections:
+            if connection[0][0] == host:
+                ports[connection[2]] = connection[1]
 
-    return hosts_ports
+    return ports
 
 
 def match_pattern_matrix(pattern):
@@ -92,8 +81,8 @@ def match_pattern_matrix(pattern):
     FILEPATH = data_folder / FILENAME
     _temp = set()
     with open(FILEPATH) as file:
-        data = file.readline().strip() # first line of adjacency matrix 
-        data = data.split() # currently split by spaces
+        data = file.readline().strip()  # first line of adjacency matrix
+        data = data.split()             # currently split by spaces
         for entry in data:
             if pattern in entry:
                 _temp.add(entry)
