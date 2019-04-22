@@ -1,7 +1,7 @@
 import time
 import os
 from adjacency_matrix import get_host_mapping
-from common_functions import displayLine, set_prompt
+from common_functions import displayLine, set_prompt, verification_function
 
 
 def configure_bgp(client, loopbacks, device):
@@ -80,7 +80,11 @@ def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections)
         client.send(f"{command}\r")
         time.sleep(0.5)
         output = client.recv(1000)
+        print("Configuring this bridge")
+        print(f"{output}")
         verification_function(client, command, output)
+
+        time.sleep(2)
         client.send(f"ip link set up dev {bridge_names[t_name]}\r")
         time.sleep(0.5)
         client.send(f"brctl stp {bridge_names[t_name]} off\r")

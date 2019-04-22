@@ -113,6 +113,10 @@ def tenant_leaf_mapping():
 def verification_function(client, command, command_output):
     command_output = command_output.decode('utf-8')
     if 'command not found' in command_output:
+        print("Command doesn't seem to be found")
         client.send(f"{command}\r")
+        time.sleep(0.5)
+        output = client.recv(1000)
+        print(output)
     else:
         print(f"Command {command} seems to be configured properly")
