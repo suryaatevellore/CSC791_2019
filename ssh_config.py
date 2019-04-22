@@ -26,9 +26,9 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         time.sleep(0.5)
         connections = create_neighbors()
 
-        t2l_mapping = tenant_leaf_mapping();
+        t2l_mapping = tenant_leaf_mapping()
         tenants = get_tenants(t2l_mapping)
-        vx_id = get_vxlan_id(tenants);
+        vx_id = get_vxlan_id(tenants)
         # ==========================================================
         # configure_loopbacks on all devices
         # ==========================================================
@@ -40,7 +40,6 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         if device[0] == 'L':
             # Will need to configure tunnels and bridges according to
             # the tenant mapping
-
             install_bridge_utils(device)
             print("Installed bridge-utils on device")
             print(f"Configure bridge on {device}")

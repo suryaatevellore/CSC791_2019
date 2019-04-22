@@ -73,6 +73,8 @@ def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections)
     for t_name, hosts in t2l_mapping.items():
         tunnel_name = get_tunnel_name(bridge_names[t_name])
         host_mapping = get_host_mapping(connections, hosts)
+        client.send('\r\r')
+        time.sleep(0.5)
         client.send(f"brctl addbr {bridge_names[t_name]}\r")
         time.sleep(0.5)
         client.send(f"ip link set up dev {bridge_names[t_name]}\r")
