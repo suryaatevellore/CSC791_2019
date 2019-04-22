@@ -26,6 +26,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         initial_prompt = client.recv(1000);
         time.sleep(0.5)
         connections = create_neighbors()
+        print(connections)
         # ==========================================================
         # configure_bridges only for leaves
         # ==========================================================
@@ -34,9 +35,13 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
             # the tenant mapping
             print(f"Configure bridge on {device}")
             set_prompt(client, initial_prompt, 'server')
-            t2l_mapping = tenant_leaf_mapping()
-            configure_tunnels(client, t2l_mapping[device], loopbacks[device], device)
-            configure_bridges(client, t2l_mapping, connections[device], loopbacks[device], device)
+            print(f"Connection {connections}")
+            #t2l_mapping = tenant_leaf_mapping()
+            #tenants = get_tenants(t2l_mapping)
+            # vx_id contains tenant: vx_id
+            # assume bridge names to be the same as tenants
+            # vx_id = get_vx_id(tenants)
+            # configure_overlay(client, t2l_mapping[device], loopbacks[device], device, connections[device])
         else:
             print("No need for bridges or tunnels on spines/RRs")
 
