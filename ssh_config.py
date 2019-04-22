@@ -103,3 +103,13 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
 
         print("Closing SSH connection")
         client.close()
+
+
+# def create_ssh_object():
+#     try:
+
+
+
+#     except socket.gaierror:
+
+#     return client

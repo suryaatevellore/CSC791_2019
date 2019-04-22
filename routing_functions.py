@@ -69,7 +69,7 @@ def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections)
     # configure the host ports
     # remove ip from the host ports
 
-    bridge_names = {(tenant, 'BR'+str(index+1)) for index,tenant in enumerate(t2l_mapping.keys())}
+    bridge_names = {tenant:'BR'+str(index+1) for index,tenant in enumerate(t2l_mapping.keys())}
     print(f"Bridge names {bridge_names}")
     for t_name, hosts in t2l_mapping.items():
 
@@ -98,7 +98,7 @@ def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections)
 
 
 def get_vxlan_id(tenants, index=10):
-    return {(value, index+key)for key, value in enumerate(tenants)}
+    return {value: index+key for key, value in enumerate(tenants)}
 
 
 def get_tunnel_name(bridge):
