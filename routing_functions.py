@@ -70,12 +70,9 @@ def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections)
     # remove ip from the host ports
 
     bridge_names = {tenant:'BR'+str(index+1) for index,tenant in enumerate(t2l_mapping.keys())}
-    print(f"Bridge names {bridge_names}")
     for t_name, hosts in t2l_mapping.items():
-
         tunnel_name = get_tunnel_name(bridge_names[t_name])
         host_mapping = get_host_mapping(connections, hosts)
-
         client.send(f"brctl addbr {bridge_names[t_name]}\r")
         time.sleep(0.5)
         client.send(f"ip link set up dev {bridge_names[t_name]}\r")
