@@ -106,5 +106,13 @@ def tenant_leaf_mapping():
                 remaining = remaining[:-1]           # gets rid of the last }
                 hosts = remaining.split(",")
                 mapping[l_id][t_id] = hosts
-                
+
     return mapping
+
+
+def verification_function(client, command, command_output):
+    command_output = command_output.decode('utf-8')
+    if 'command not found' in command_output:
+        client.send(f"{command}\r")
+    else:
+        print(f"Command {command} seems to be configured properly")
