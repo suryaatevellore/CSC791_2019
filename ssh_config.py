@@ -40,11 +40,13 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         if device[0] == 'L':
             # Will need to configure tunnels and bridges according to
             # the tenant mapping
-            
+
             install_bridge_utils(device)
             print(f"Configure bridge on {device}")
             set_prompt(client, initial_prompt, 'server')
-            configure_overlay(client, t2l_mapping[device], vx_id, loopbacks[device], device, connections[device])
+            if device in t2l_mapping.keys():
+                print(f"Configuring overlay on {device}")
+                configure_overlay(client, t2l_mapping[device], vx_id, loopbacks[device], device, connections[device])
         else:
             print("No need for bridges or tunnels on spines/RRs")
 
