@@ -74,13 +74,10 @@ def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections)
         tunnel_name = get_tunnel_name(bridge_names[t_name])
         host_mapping = get_host_mapping(connections, hosts)
         print(f"Configuring {bridge_names[t_name]} on {device}")
-<<<<<<< HEAD
         client.send('\n')
         client.send(f"brctl addbr {bridge_names[t_name]}\r")
-=======
         command = f"brctl addbr {bridge_names[t_name]}"
         client.send(f"{command}\r")
->>>>>>> 8b61eebcd6e1260ffe86565fe57646959a77a1aa
         time.sleep(0.5)
         output = client.recv(1000)
         verification_function(client, command, output)
