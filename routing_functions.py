@@ -75,7 +75,7 @@ def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections)
         host_mapping = get_host_mapping(connections, hosts)
         client.send('\r\r')
         time.sleep(1)
-        client.send(f"brctl addbr {bridge_names[t_name]}\r")
+        configure_bridges(device, bridge_names[t_name])
         time.sleep(0.5)
         client.send(f"ip link set up dev {bridge_names[t_name]}\r")
         time.sleep(0.5)
@@ -112,6 +112,10 @@ def get_tenants(t2l_mapping):
             tenant_set.add(t_name)
 
     return tenant_set
+
+
+def configure_bridges(device, bridge):
+    os.system(f"sudo docker exec -d {device} bash -c 'brctl addbr {bridge}'")
 
 
 def install_bridge_utils(device):
