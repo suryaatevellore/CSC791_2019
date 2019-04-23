@@ -141,12 +141,13 @@ def configure_bridges(bridge, device):
 
 
 def configure_loopbacks(client, device, loopback):
+    print(f"Trying to Configure {loopback} on {device}")
     completed = subprocess.run(f"sudo docker exec -it L1 bash -c 'ip addr show lo | grep inet'", shell=True, stdout=subprocess.PIPE)
     loopback_ip = completed.stdout.decode('utf-8').strip()
     if(len(loopback_ip.split("\n")) == 1):
         print(f"Configure {loopback} as {device} loopback")
         client.send(f"ip addr add {loopback}/32 dev lo\r")
-    time.sleep(0.5)
-     completed = subprocess.run(f"sudo docker exec -it L1 bash -c 'ip addr show lo | grep inet'", shell=True, stdout=subprocess.PIPE)
+        time.sleep(0.5)
+    completed = subprocess.run(f"sudo docker exec -it L1 bash -c 'ip addr show lo | grep inet'", shell=True, stdout=subprocess.PIPE)
     loopback_ip = completed.stdout.decode('utf-8').strip()
-    print(loopback_ip))
+    print(loopback_ip)
