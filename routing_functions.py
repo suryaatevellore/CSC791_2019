@@ -119,7 +119,7 @@ def install_bridge_utils(device):
     while('not installed' in output and retries > 0):
             completed = subprocess.run(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'",shell=True, stdout=subprocess.PIPE)
             print(completed)
-            time.sleep(0.5)
+            time.sleep(15)
             completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'dpkg -s bridge-utils | grep Status'", shell=True, stdout=subprocess.PIPE)
             output = completed.stdout.decode('utf-8').strip()
             print(output)
