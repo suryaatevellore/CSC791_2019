@@ -113,19 +113,19 @@ def get_tenants(t2l_mapping):
 
 
 def install_bridge_utils(device):
-    completed = subprocess.run("sudo docker exec -it {device} bash -c 'dpkg -s bridge-utils | grep Status'",shell=True, stdout=subprocess.PIPE)
+    completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'dpkg -s bridge-utils | grep Status'",shell=True, stdout=subprocess.PIPE)
     retries = 2
     output = completed.stdout.decode('utf-8').strip()
     while('not installed' in output and retries > 0):
-            completed = subprocess.run("sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'",shell=True, stdout=subprocess.PIPE)
+            completed = subprocess.run(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'",shell=True, stdout=subprocess.PIPE)
             print(completed)
             time.sleep(0.5)
-            completed = subprocess.run("sudo docker exec -it {device} bash -c 'dpkg -s bridge-utils | grep Status'", shell=True, stdout=subprocess.PIPE)
+            completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'dpkg -s bridge-utils | grep Status'", shell=True, stdout=subprocess.PIPE)
             output = completed.stdout.decode('utf-8').strip()
             print(output)
             retries-=1
-
-    print("Bridge utils installed on {device} and output is {output}")
+    time.sleep(1)
+    print(f"Bridge utils installed on {device} and output is {output}")
 
 
 def configure_bridges(bridge, device):
