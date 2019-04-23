@@ -2,7 +2,7 @@ import time
 import os
 from adjacency_matrix import get_host_mapping
 from common_functions import displayLine, set_prompt
-
+import subprocess
 
 def configure_bgp(client, loopbacks, device):
     '''
