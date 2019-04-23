@@ -112,10 +112,7 @@ def install_bridge_utils(device):
 
 def configure_bridges(bridge, device):
     print(f"Configuring {bridge} on {device}")
-    completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'brctl addbr {bridge}'", shell=True, stdout=subprocess.PIPE)
-    print(completed)
-    completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'brctl addbr {bridge}'", shell=True, stdout=subprocess.PIPE)
-    print(completed)
+    subprocess.run(f"sudo docker exec -it {device} bash -c 'echo $PATH'", shell=True, stdout=subprocess.PIPE)
     completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'brctl addbr {bridge}'", shell=True, stdout=subprocess.PIPE)
     print(completed)
     completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'ip link set {bridge} up'", shell=True, stdout=subprocess.PIPE)
