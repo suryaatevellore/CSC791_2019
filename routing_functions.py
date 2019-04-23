@@ -122,7 +122,9 @@ def install_bridge_utils(device):
             completed = subrocess.run("sudo docker exec -it {device} bash -c 'dpkg -s bridge-utils | grep Status'")
             output = completed.stdout.decode('utf-8').strip()
             print(output)
-            break
+            retries-=1
+
+    print("Bridge utils installed on {device} and output is {output}")
 
 
 def configure_bridges(bridge, device):

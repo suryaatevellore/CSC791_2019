@@ -32,7 +32,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         tenants = get_tenants(t2l_mapping)
         vx_id = get_vxlan_id(tenants)
         # ==========================================================
-        # configure_loopbacks on all devices
+        # configure_loopbacks on device
         # ==========================================================
         configure_loopbacks(client, device, loopbacks[device])
         # ==========================================================
