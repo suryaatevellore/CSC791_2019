@@ -113,9 +113,16 @@ def install_bridge_utils(device):
 def configure_bridges(bridge, device):
 
     print(f"Configuring {bridge} on {device}")
-    os.system(f"sudo docker exec -d {device} bash -c 'brctl addbr {bridge}'")
-    os.system(f"sudo docker exec -d {device} bash -c 'ip link set {bridge} up'")
-    os.system(f"sudo docker exec -d {device} bash -c 'brctl stp {bridge} off'")
+    completed = subprocess.run(f"sudo docker exec -d {device} bash -c 'brctl addbr {bridge}'", shell=True, stdout=subprocess.PIPE)
+    print(completed)
+    completed = subprocess.run(f"sudo docker exec -d {device} bash -c 'ip link set {bridge} up'", shell=True, stdout=subprocess.PIPE)
+    print(completed)
+    completed = subprocess.run(f"sudo docker exec -d {device} bash -c 'brctl stp {bridge} off'", shell=True, stdout=subprocess.PIPE)
+    print(completed)
+
+    # os.system(f"sudo docker exec -d {device} bash -c 'brctl addbr {bridge}'")
+    # os.system(f"sudo docker exec -d {device} bash -c 'ip link set {bridge} up'")
+    # os.system(f"sudo docker exec -d {device} bash -c 'brctl stp {bridge} off'")
 
 def configure_loopbacks(client, device, loopback):
     print(f"Configure {loopback} as {device} loopback")
