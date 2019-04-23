@@ -50,7 +50,7 @@ def configure_ospf(client, neighbor_IP, loopback, device):
     time.sleep(0.5)
 
 
-def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections):
+def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections, bridge_names):
     """
         client: Paramiko object for device
         t2l_mapping : Tenant and hosts attached to device
@@ -69,22 +69,10 @@ def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections)
     # configure the host ports
     # remove ip from the host ports
 
-    bridge_names = {tenant:'BR'+str(index+1) for index,tenant in enumerate(t2l_mapping.keys())}
+
     for t_name, hosts in t2l_mapping.items():
         tunnel_name = get_tunnel_name(bridge_names[t_name])
         host_mapping = get_host_mapping(connections, hosts)
-        print(f"Configuring {bridge_names[t_name]} on {device}")
-        client.send('\n')
-        client.send(f"brctl addbr {bridge_names[t_name]}\r")
-        command = f"brctl addbr {bridge_names[t_name]}"
-        client.send(f"{command}\r")
-        time.sleep(0.5)
-        output = client.recv(1000)
-        print("Configuring this bridge")
-        print(f"{output}")
-        verification_function(client, command, output)
-
-        time.sleep(2)
         client.send(f"ip link set up dev {bridge_names[t_name]}\r")
         time.sleep(0.5)
         client.send(f"brctl stp {bridge_names[t_name]} off\r")
@@ -124,6 +112,10 @@ def get_tenants(t2l_mapping):
 def install_bridge_utils(device):
     os.system(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'")
 
+def configure_bridges(bridges, device):
+    for bridge in bridges:
+        print(f"Configuring {bridge} on {device}")
+        os.system(f"sudo docker exec -d {device} bash -c 'brctl addbr {bridge}'")
 
 def configure_loopbacks(client, device, loopback):
     print(f"Configure {loopback} as {device} loopback")

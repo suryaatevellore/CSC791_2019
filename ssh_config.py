@@ -14,6 +14,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         username   : SSH username
         password   : SSH password
     """
+    t2l_mapping = tenant_leaf_mapping()
     for device, ip in device_list.items():
         print("Creating ssh connection")
         ssh = paramiko.SSHClient()
@@ -26,7 +27,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         time.sleep(0.5)
         connections = create_neighbors()
 
-        t2l_mapping = tenant_leaf_mapping()
+
         tenants = get_tenants(t2l_mapping)
         vx_id = get_vxlan_id(tenants)
         # ==========================================================
@@ -42,10 +43,12 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
             # the tenant mapping
             install_bridge_utils(device)
             print("Installed bridge-utils on device")
+            bridge_names = {tenant:'BR'+str(index+1) for index,tenant in enumerate(t2l_mapping[device].keys())}
+            configure_bridges(bridge_names, device)
             set_prompt(client, initial_prompt, 'server')
             if device in t2l_mapping.keys():
                 print(f"Configuring overlay on {device}")
-                configure_overlay(client, t2l_mapping[device], vx_id, loopbacks[device], device, connections[device])
+                configure_overlay(client, t2l_mapping[device], vx_id, loopbacks[device], device, connections[device], bridge_names)
         else:
             print("No need for bridges or tunnels on spines/RRs")
 
