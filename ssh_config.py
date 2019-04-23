@@ -47,7 +47,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
 
             if device in t2l_mapping.keys():
                 print(f"Configuring overlay on {device}")
-                configure_overlay(client, t2l_mapping[device], vx_id, loopbacks[device], device, connections[device], bridge_names)
+                configure_overlay(client, t2l_mapping[device], vx_id, loopbacks[device], device, connections[device])
         else:
             print("No need for bridges or tunnels on spines/RRs")
 
