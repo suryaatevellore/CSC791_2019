@@ -14,6 +14,9 @@ def main():
          print("Unable to extract spine information from adjacency matrix. Device names should start with L")
          sys.exit(1)
 
+    # Maintain the order in device list
+    spines = sorted(spines)
+    leaves = sorted(leaves)
     index = 1 # global counter for loopback indexes
     devices_list = spines + leaves
     device_loopbacks, index = create_loopbacks(devices_list, index)
