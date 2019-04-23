@@ -4,13 +4,15 @@ import re
 import sys
 from pathlib import Path
 from adjacency_matrix import match_pattern_matrix
+from collections import OrderedDict
 
 def create_loopbacks(device_list, index):
-    Loopbacks = {}
+    Loopbacks = OrderedDict()
     for element in device_list:
         Loopbacks[element] = ((str(index) + '.') * 3) + str(index)
         index += 1
 
+    print(f"Loopbacks created {Loopbacks}")
     return Loopbacks, index
 
 
