@@ -78,7 +78,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
                 loopback_bgp = {}
                 if 'RR' in device:
                     for router, loopback in loopbacks.items():
-                        if(router[0] in ['L', 'S']):
+                        if(router[0] in ['L']):
                             loopback_bgp[router] = loopback
                 elif device[0] == 'S':
                     for router, loopback in loopbacks.items():
@@ -87,7 +87,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
 
                 elif device[0] == 'L':
                     for router, loopback in loopbacks.items():
-                        if(router[0]=='S'):
+                        if(router[0] in ['S', 'L']):
                             loopback_bgp[router] = loopback
             set_prompt(client, initial_prompt, 'router')
             configure_bgp(client, loopback_bgp, device)

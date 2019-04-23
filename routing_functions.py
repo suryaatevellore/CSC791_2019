@@ -24,10 +24,12 @@ def configure_bgp(client, loopbacks, device):
     client.send("address-family l2vpn evpn\r")
     time.sleep(0.5)
     for item, loopback in loopbacks.items():
+        print(f"Configuring {item} for RR")
         if item != device:
             client.send(f"neighbor {loopback} activate\r")
             time.sleep(0.5)
             if 'RR' in device:
+                print(f"Configuring {loopback} on RR")
                 client.send(f"neighbor {loopback} route-reflector-client")
                 time.sleep(0.5)
     client.send('advertise-all-vni\r')
