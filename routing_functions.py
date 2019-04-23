@@ -30,7 +30,7 @@ def configure_bgp(client, loopbacks, device):
             time.sleep(0.5)
             if 'RR' in device:
                 print(f"Configuring {loopback} on RR")
-                client.send(f"neighbor {loopback} route-reflector-client")
+                client.send(f"neighbor {loopback} route-reflector-client\r")
                 time.sleep(0.5)
     client.send('advertise-all-vni\r')
     time.sleep(0.5)
