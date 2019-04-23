@@ -43,9 +43,9 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
             # the tenant mapping
             install_bridge_utils(device)
             print("Installed bridge-utils on device")
+            set_prompt(client, initial_prompt, 'server')
             bridge_names = {tenant:'BR'+str(index+1) for index,tenant in enumerate(t2l_mapping[device].keys())}
             configure_bridges(bridge_names, device)
-            set_prompt(client, initial_prompt, 'server')
             if device in t2l_mapping.keys():
                 print(f"Configuring overlay on {device}")
                 configure_overlay(client, t2l_mapping[device], vx_id, loopbacks[device], device, connections[device], bridge_names)
