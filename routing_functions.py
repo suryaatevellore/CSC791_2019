@@ -125,6 +125,9 @@ def configure_bridges(bridge, device):
     # os.system(f"sudo docker exec -d {device} bash -c 'brctl stp {bridge} off'")
 
 def configure_loopbacks(client, device, loopback):
+    completed = subprocess.run(f"sudo docker exec -it L1 bash -c 'ip addr show lo | grep inet'", shell=True, stdout=subprocess.PIPE)
+    loopback_ip = completed.stdout.decode('utf-8').strip()
+    print(loopback_ip)
     print(f"Configure {loopback} as {device} loopback")
     client.send(f"ip addr add {loopback}/32 dev lo\r")
     time.sleep(0.5)
