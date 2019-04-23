@@ -15,7 +15,11 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         password   : SSH password
     """
     t2l_mapping = tenant_leaf_mapping()
+    connections = create_neighbors()
     for device, ip in device_list.items():
+        print("=================================")
+        print(f"Starting configuration for {device}")
+        print("=================================")
         print("Creating ssh connection")
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -25,12 +29,6 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         time.sleep(0.5)
         initial_prompt = client.recv(1000)
         time.sleep(0.5)
-        connections = create_neighbors()
-
-        print("=================================")
-        print(f"Starting configuration for {device}")
-        print("=================================")
-
         tenants = get_tenants(t2l_mapping)
         vx_id = get_vxlan_id(tenants)
         # ==========================================================

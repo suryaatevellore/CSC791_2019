@@ -106,7 +106,3 @@ def tenant_leaf_mapping():
                 mapping[l_id][t_id] = hosts
 
     return mapping
-
-
-
-
