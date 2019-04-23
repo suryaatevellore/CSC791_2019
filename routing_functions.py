@@ -24,7 +24,6 @@ def configure_bgp(client, loopbacks, device):
     client.send("address-family l2vpn evpn\r")
     time.sleep(0.5)
     for item, loopback in loopbacks.items():
-        print(f"Configuring {item} for RR")
         if item != device:
             client.send(f"neighbor {loopback} activate\r")
             time.sleep(0.5)
@@ -142,12 +141,12 @@ def configure_bridges(bridge, device):
 
 def configure_loopbacks(client, device, loopback):
     print(f"Trying to Configure {loopback} on {device}")
-    completed = subprocess.run(f"sudo docker exec -it L1 bash -c 'ip addr show lo | grep inet'", shell=True, stdout=subprocess.PIPE)
+    completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'ip addr show lo | grep inet'", shell=True, stdout=subprocess.PIPE)
     loopback_ip = completed.stdout.decode('utf-8').strip()
     if(len(loopback_ip.split("\n")) == 1):
         print(f"Configure {loopback} as {device} loopback")
         client.send(f"ip addr add {loopback}/32 dev lo\r")
         time.sleep(0.5)
-    completed = subprocess.run(f"sudo docker exec -it L1 bash -c 'ip addr show lo | grep inet'", shell=True, stdout=subprocess.PIPE)
+    completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'ip addr show lo | grep inet'", shell=True, stdout=subprocess.PIPE)
     loopback_ip = completed.stdout.decode('utf-8').strip()
     print(loopback_ip)
