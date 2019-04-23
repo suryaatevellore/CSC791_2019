@@ -73,10 +73,8 @@ def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections,
     for t_name, hosts in t2l_mapping.items():
         tunnel_name = get_tunnel_name(bridge_names[t_name])
         host_mapping = get_host_mapping(connections, hosts)
-        client.send(f"ip link set up dev {bridge_names[t_name]}\r")
-        time.sleep(0.5)
-        client.send(f"brctl stp {bridge_names[t_name]} off\r")
-        time.sleep(0.5)
+        bridge_names = {tenant:'BR'+str(index+1) for index,tenant in enumerate(t2l_mapping[device].keys())}
+        configure_bridges(bridge_names[t_name], device)
         client.send(f"ip link add {tunnel_name} type vxlan id {vx_id[t_name]} dstport 4789 local {loopback} nolearning\r")
         time.sleep(0.5)
         client.send(f"ip link set {tunnel_name} up\r")
@@ -113,9 +111,11 @@ def install_bridge_utils(device):
     os.system(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'")
 
 def configure_bridges(bridges, device):
-    for bridge in bridges:
-        print(f"Configuring {bridge} on {device}")
-        os.system(f"sudo docker exec -d {device} bash -c 'brctl addbr {bridge}'")
+
+    print(f"Configuring {bridge} on {device}")
+    os.system(f"sudo docker exec -d {device} bash -c 'brctl addbr {bridge}'")
+    os.system(f"sudo docker exec -d {device} bash -c 'ip link set {bridge} up")
+    os.system(f"sudo docker exec -d {device} bash -c 'brctl stp {bridge} off")
 
 def configure_loopbacks(client, device, loopback):
     print(f"Configure {loopback} as {device} loopback")
