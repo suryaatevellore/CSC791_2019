@@ -26,7 +26,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         initial_prompt = client.recv(1000)
         time.sleep(0.5)
         connections = create_neighbors()
-        
+
         print("=================================")
         print(f"Starting configuration for {device}")
         print("=================================")
@@ -47,7 +47,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
             install_bridge_utils(device)
             print("Installed bridge-utils on device")
             set_prompt(client, initial_prompt, 'server')
-
+            time.sleep(3)
             if device in t2l_mapping.keys():
                 print(f"Configuring overlay on {device}")
                 configure_overlay(client, t2l_mapping[device], vx_id, loopbacks[device], device, connections[device])
@@ -76,9 +76,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
                     if 'RR' in router:
                         loopback_bgp[router] = loopback
             else:
-                displayLine()
-                displayLine()
-                # No RRs present, each leaf peers with each spine only and vice versa
+                # No RRs present, each leaf peers all other devices, but
                 loopback_bgp = {}
                 if 'RR' in device:
                     for router, loopback in loopbacks.items():

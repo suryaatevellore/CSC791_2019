@@ -27,7 +27,12 @@ def configure_bgp(client, loopbacks, device):
         if item != device:
             client.send(f"neighbor {loopback} activate\r")
             time.sleep(0.5)
+            if 'RR' in device:
+                client.send(f"neighbor {loopback} route-reflector-client")
+                time.sleep(0.5)
     client.send('advertise-all-vni\r')
+    time.sleep(0.5)
+    client.send('end\r')
     time.sleep(0.5)
 
 
@@ -108,7 +113,17 @@ def get_tenants(t2l_mapping):
 
 
 def install_bridge_utils(device):
-    os.system(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'")
+    completed = subrocess.run("sudo docker exec -it {device} bash -c 'dpkg -s bridge-utils | grep Status'")
+    retries = 2
+    output = completed.stdout.decode('utf-8').strip()
+    while('not installed' in output and retries > 0):
+            os.system(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'")
+            time.sleep(0.5)
+            completed = subrocess.run("sudo docker exec -it {device} bash -c 'dpkg -s bridge-utils | grep Status'")
+            output = completed.stdout.decode('utf-8').strip()
+            print(output)
+            break
+
 
 def configure_bridges(bridge, device):
     print(f"Configuring {bridge} on {device}")
