@@ -113,13 +113,13 @@ def get_tenants(t2l_mapping):
 
 
 def install_bridge_utils(device):
-    completed = subrocess.run("sudo docker exec -it {device} bash -c 'dpkg -s bridge-utils | grep Status'")
+    completed = subprocess.run("sudo docker exec -it {device} bash -c 'dpkg -s bridge-utils | grep Status'")
     retries = 2
     output = completed.stdout.decode('utf-8').strip()
     while('not installed' in output and retries > 0):
             os.system(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'")
             time.sleep(0.5)
-            completed = subrocess.run("sudo docker exec -it {device} bash -c 'dpkg -s bridge-utils | grep Status'")
+            completed = subprocess.run("sudo docker exec -it {device} bash -c 'dpkg -s bridge-utils | grep Status'")
             output = completed.stdout.decode('utf-8').strip()
             print(output)
             retries-=1
