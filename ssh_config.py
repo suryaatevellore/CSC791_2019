@@ -1,6 +1,6 @@
 import time
 import paramiko
-from routing_functions import configure_bgp, configure_ospf, configure_loopbacks, configure_overlay,install_bridge_utils, get_vxlan_id, get_tenants
+from routing_functions import configure_bgp, configure_ospf, configure_loopbacks, configure_overlay,install_bridge_utils, get_vxlan_id, get_tenants, configure_bridges
 from adjacency_matrix import filter_by
 from adjacency_matrix import create_neighbors
 from common_functions import displayLine, set_prompt, tenant_leaf_mapping

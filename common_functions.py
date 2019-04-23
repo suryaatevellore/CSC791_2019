@@ -120,3 +120,6 @@ def verification_function(client, command, command_output):
         print(output)
     else:
         print(f"Command {command} seems to be configured properly")
+
+
+
