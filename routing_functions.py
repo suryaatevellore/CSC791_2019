@@ -111,13 +111,16 @@ def install_bridge_utils(device):
     os.system(f"sudo docker exec -d {device} bash -c 'apt-get install bridge-utils -y'")
 
 def configure_bridges(bridge, device):
-
     print(f"Configuring {bridge} on {device}")
-    completed = subprocess.run(f"sudo docker exec -d {device} bash -c 'brctl addbr {bridge}'", shell=True, stdout=subprocess.PIPE)
+    completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'brctl addbr {bridge}'", shell=True, stdout=subprocess.PIPE)
     print(completed)
-    completed = subprocess.run(f"sudo docker exec -d {device} bash -c 'ip link set {bridge} up'", shell=True, stdout=subprocess.PIPE)
+    completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'brctl addbr {bridge}'", shell=True, stdout=subprocess.PIPE)
     print(completed)
-    completed = subprocess.run(f"sudo docker exec -d {device} bash -c 'brctl stp {bridge} off'", shell=True, stdout=subprocess.PIPE)
+    completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'brctl addbr {bridge}'", shell=True, stdout=subprocess.PIPE)
+    print(completed)
+    completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'ip link set {bridge} up'", shell=True, stdout=subprocess.PIPE)
+    print(completed)
+    completed = subprocess.run(f"sudo docker exec -it {device} bash -c 'brctl stp {bridge} off'", shell=True, stdout=subprocess.PIPE)
     print(completed)
 
     # os.system(f"sudo docker exec -d {device} bash -c 'brctl addbr {bridge}'")
