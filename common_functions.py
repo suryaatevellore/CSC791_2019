@@ -29,12 +29,10 @@ def displayLine():
 
 
 def check_prompt(initial_prompt):
-    print(f"Checking for prompt {initial_prompt}")
     router_prompt = initial_prompt.decode('utf-8')
     searchObj = re.search( r'Welcome to Ubuntu', router_prompt, re.M|re.I)
     if searchObj:
         # 1 is server prompt
-        print("Welcome to Ubuntu found")
         return 1
     else:
         # 0 is router prompt
@@ -49,7 +47,6 @@ def set_prompt(client, initial_prompt, prompt_type):
             client.send('\rvtysh\r')
             time.sleep(0.5)
             output = client.recv(1000)
-            print(f"prompt {output}")
         else:
             return
 
@@ -60,7 +57,6 @@ def set_prompt(client, initial_prompt, prompt_type):
             time.sleep(0.5)
             client.send("exit\r")
             output = client.recv(1000)
-            print(f"prompt {output}")
         else:
             return
 
@@ -109,17 +105,6 @@ def tenant_leaf_mapping():
 
     return mapping
 
-
-def verification_function(client, command, command_output):
-    command_output = command_output.decode('utf-8')
-    if 'command not found' in command_output:
-        print("Command doesn't seem to be found")
-        client.send(f"{command}\r")
-        time.sleep(0.5)
-        output = client.recv(1000)
-        print(output)
-    else:
-        print(f"Command {command} seems to be configured properly")
 
 
 

@@ -26,7 +26,10 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         initial_prompt = client.recv(1000)
         time.sleep(0.5)
         connections = create_neighbors()
-
+        
+        print("=================================")
+        print(f"Starting configuration for {device}")
+        print("=================================")
 
         tenants = get_tenants(t2l_mapping)
         vx_id = get_vxlan_id(tenants)
@@ -55,13 +58,9 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         # configure ospf for all devices
         # ==========================================================
         if ospf_flag:
-            displayLine()
-            print("OSPF flag is set")
-            displayLine()
             set_prompt(client, initial_prompt, 'router')
             print(f"started ospf configuration for {device}")
             ospf_ips = filter_by(connections[device], 'IP', device)
-            print(f"Connected IPs for {device} are {ospf_ips}")
             configure_ospf(client, ospf_ips, loopbacks[device], device)
             print(f"Finished ospf configuration for {device}")
 
@@ -71,9 +70,6 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         # ==========================================================
         if bgp_flag:
             if(RR_flag):
-                displayLine()
-                print("bgp and RR flag is set")
-                displayLine()
                 # loopbacks contains loopbacks of RRs
                 loopback_bgp = {}
                 for router, loopback in loopbacks.items():
@@ -81,7 +77,6 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
                         loopback_bgp[router] = loopback
             else:
                 displayLine()
-                print("bgp flag is set, RR flag is not set")
                 displayLine()
                 # No RRs present, each leaf peers with each spine only and vice versa
                 loopback_bgp = {}
@@ -98,7 +93,6 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
                     for router, loopback in loopbacks.items():
                         if(router[0]=='S'):
                             loopback_bgp[router] = loopback
-            print(f"For {device}, neighbors are {loopback_bgp}")
             set_prompt(client, initial_prompt, 'router')
             configure_bgp(client, loopback_bgp, device)
 

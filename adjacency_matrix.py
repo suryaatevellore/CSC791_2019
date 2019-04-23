@@ -40,7 +40,6 @@ def filter_by(connections, key, device):
     """
         returns list, the attributes as per specified key
     """
-    print(f"{connections} recieved for {device}")
     result = []
     if key == 'IP':
         if 'RR' in device:
@@ -67,10 +66,8 @@ def filter_by(connections, key, device):
 def get_host_mapping(connections, hosts):
     # hostname, localport, bridge_id
     ports = {}
-    print(f"Recieved {hosts} connectivity")
     for host in hosts:
         for connection in connections:
-            print(f"Testing {connection[0]} aganst {host} ")
             if connection[0] == host:
                 ip = ''.join(connection[1])
                 ip = ip[1:-1]
@@ -92,7 +89,6 @@ def match_pattern_matrix(pattern):
                 _temp.add(entry)
 
     if _temp:
-        print(_temp)
         return list(_temp)
     else:
         return None
