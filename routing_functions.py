@@ -33,9 +33,8 @@ def configure_bgp(client, loopbacks, device):
                 time.sleep(0.5)
     client.send('advertise-all-vni\r')
     time.sleep(0.5)
-    client.send('end\r')
-    time.sleep(0.5)
-
+    output = client.recv(1000)
+    print(output)
 
 def configure_ospf(client, neighbor_IP, loopback, device):
     """
@@ -52,9 +51,8 @@ def configure_ospf(client, neighbor_IP, loopback, device):
         time.sleep(0.5)
         client.send("passive-interface lo\r")
         time.sleep(0.5)
-    client.send("end")
-    time.sleep(0.5)
-
+    output = client.recv(1000)
+    print(output)
 
 def configure_overlay(client, t2l_mapping, vx_id, loopback, device, connections):
     """

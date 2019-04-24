@@ -28,6 +28,7 @@ def config_via_ssh(device_list, loopbacks, RR_flag=False, ospf_flag=False, bgp_f
         client = ssh.invoke_shell()
         time.sleep(0.5)
         initial_prompt = client.recv(1000)
+        print(f"initial_prompt {initial_prompt}")
         time.sleep(0.5)
         tenants = get_tenants(t2l_mapping)
         vx_id = get_vxlan_id(tenants)

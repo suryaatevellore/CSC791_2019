@@ -35,6 +35,7 @@ def check_prompt(initial_prompt):
     searchObj = re.search( r'Welcome to Ubuntu', router_prompt, re.M|re.I)
     if searchObj:
         # 1 is server prompt
+        print('Welcome to ubuntu found')
         return 1
     else:
         # 0 is router prompt
@@ -49,6 +50,7 @@ def set_prompt(client, initial_prompt, prompt_type):
             client.send('\rvtysh\r')
             time.sleep(0.5)
             output = client.recv(1000)
+            print(output)
         else:
             return
 
@@ -84,17 +86,23 @@ def tenant_leaf_mapping():
     data_folder = Path("/home/RND-TOOL/rnd_lab/scripts/")
     FILENAME = 'tenant.txt'
     FILEPATH = data_folder / FILENAME
-    leaf_regex = r'{([A-Za-z\d]+-[A-Za-z]\d{1,4})?}'
-    tenant_regex = r'[a-zA-Z\d]+-[A-Za-z]\d{.*?}'
+    # leaf_regex = r"{([A-Za-z\d]+-[A-Za-z]\d{1,4})?}"
+    leaf_regex = r"{(Leaf\d-L\d{1,2})?}"
+    tenant_regex = r"[a-zA-Z\d]+-[A-Za-z]\d{.*?}"
     with open(FILEPATH, "r+") as file:
         for line in file:
-            leaf = re.findall(leaf_regex, line)
+            # print(line.strip())
+            #leaf = re.findall(leaf_regex, line)
+            m = re.match(leaf_regex, line)
+            leaf = m.group(1)
+            # print(leaf)
             if not leaf:
                 print("Either leaf names are not specified, or their formatting is incorrect")
                 sys.exit(1)
-            l_name, l_id = leaf[0].strip().split("-")
+            l_name, l_id = leaf.strip().split("-")
             mapping[l_id] = {}
             tenants = re.findall(tenant_regex, line)
+            # print(tenants)
             if not tenants:
                 print("Either tenant names are not specified, or their formatting is incorrect")
                 sys.exit(1)
