@@ -52,7 +52,7 @@ def set_prompt(client, initial_prompt, prompt_type):
             client.send('\rvtysh\r')
             time.sleep(0.5)
             output = client.recv(1000)
-            print(output)
+            # print(output)
         else:
             return
 
@@ -62,7 +62,7 @@ def set_prompt(client, initial_prompt, prompt_type):
             client.send('\rend\r')
             time.sleep(0.5)
             client.send("exit\r")
-            output = client.recv(1000)
+            # output = client.recv(1000)
         else:
             return
 
