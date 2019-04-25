@@ -1,5 +1,11 @@
 from pathlib import Path
-from auto_config import PATH
+
+DIRECTORY_PATH = "/home/RND-TOOL/rnd_lab/"
+
+def getPATH():
+        global DIRECTORY_PATH
+        return DIRECTORY_PATH
+
 
 def create_connections(FILEPATH):
     connections = {}
@@ -28,7 +34,8 @@ def create_connections(FILEPATH):
 
 
 def create_neighbors():
-    data_folder = Path(PATH)
+    DIRECTORY_PATH = getPATH()
+    data_folder = Path(DIRECTORY_PATH)
     FILENAME = 'connectivity_map.txt'
     FILEPATH = data_folder / FILENAME
     connections = create_connections(FILEPATH)
@@ -77,7 +84,8 @@ def get_host_mapping(connections, hosts):
 
 
 def match_pattern_matrix(pattern):
-    data_folder = Path(PATH + "scripts/")
+    DIRECTORY_PATH = getPATH()
+    data_folder = Path(DIRECTORY_PATH + "scripts/")
     FILENAME = 'connectivitymat.txt'
     FILEPATH = data_folder / FILENAME
     _temp = set()

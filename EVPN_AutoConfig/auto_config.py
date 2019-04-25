@@ -3,9 +3,6 @@ from ssh_config import config_via_ssh
 from common_functions import create_loopbacks, get_docker_ips, handle_device, get_RR_IPs, tenant_leaf_mapping
 
 
-PATH = "/home/RND-TOOL/rnd_lab/"
-
-
 def main():
     spines = handle_device('spine')
     if not spines:

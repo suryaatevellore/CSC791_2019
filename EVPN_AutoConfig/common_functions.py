@@ -3,9 +3,10 @@ import time
 import re
 import sys
 from pathlib import Path
-from adjacency_matrix import match_pattern_matrix
+from adjacency_matrix import match_pattern_matrix, getPATH
 from collections import OrderedDict
-from auto_config import PATH
+
+
 
 def create_loopbacks(device_list, index):
     Loopbacks = OrderedDict()
@@ -84,7 +85,8 @@ def get_RR_IPs(RR):
 
 def tenant_leaf_mapping():
     mapping = {}
-    data_folder = Path(PATH + "scripts/")
+    DIRECTORY_PATH = getPATH()
+    data_folder = Path(DIRECTORY_PATH + "scripts/")
     FILENAME = 'tenant.txt'
     FILEPATH = data_folder / FILENAME
     # leaf_regex = r"{([A-Za-z\d]+-[A-Za-z]\d{1,4})?}"
@@ -115,3 +117,5 @@ def tenant_leaf_mapping():
                 mapping[l_id][t_id] = hosts
 
     return mapping
+
+
