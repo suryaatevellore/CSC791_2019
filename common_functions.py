@@ -6,6 +6,8 @@ from pathlib import Path
 from adjacency_matrix import match_pattern_matrix
 from collections import OrderedDict
 
+PATH = ""
+
 def create_loopbacks(device_list, index):
     Loopbacks = OrderedDict()
     for element in device_list:
@@ -40,6 +42,14 @@ def check_prompt(initial_prompt):
     else:
         # 0 is router prompt
         return 0
+
+
+def setPATH(path):
+    PATH = path
+
+
+def getPATH():
+    return PATH
 
 
 def set_prompt(client, initial_prompt, prompt_type):
