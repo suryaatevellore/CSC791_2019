@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from adjacency_matrix import match_pattern_matrix
 from collections import OrderedDict
+from auto_config import PATH
 
 def create_loopbacks(device_list, index):
     Loopbacks = OrderedDict()
@@ -83,7 +84,7 @@ def get_RR_IPs(RR):
 
 def tenant_leaf_mapping():
     mapping = {}
-    data_folder = Path("/home/RND-TOOL/rnd_lab/scripts/")
+    data_folder = Path(PATH + "scripts/")
     FILENAME = 'tenant.txt'
     FILEPATH = data_folder / FILENAME
     # leaf_regex = r"{([A-Za-z\d]+-[A-Za-z]\d{1,4})?}"
